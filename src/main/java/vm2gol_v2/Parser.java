@@ -362,6 +362,19 @@ public class Parser {
                 ;
     }
 
+    private NodeList parseCall_v2() {
+        // consumeKw("call");
+
+        NodeList funcall = parseFuncall();
+        
+        consumeSym(";");
+
+        return nodelist()
+                .add("call")
+                .addAll(funcall)
+                ;
+    }
+
     private NodeList parseCallSet() {
         consumeKw("call_set");
 
@@ -489,14 +502,20 @@ public class Parser {
         case "func"    : return parseFunc();
         case "var"     : return parseVar();
         case "set"     : return parseSet();
-        case "call"    : return parseCall();
+        // case "call"    : return parseCall();
         case "call_set": return parseCallSet();
         case "return"  : return parseReturn();
         case "while"   : return parseWhile();
         case "case"    : return parseCase();
         case "_cmt"    : return parseVmComment();
         default:
-            throw unexpected("Unexpected token");
+            if (t.type == Token.Type.IDENT &&
+                    peek(1).is(Token.Type.SYM, "(")
+            ) {
+                return parseCall_v2();
+            } else {
+                throw unexpected("Unexpected token");
+            }
         }
     }
 
