@@ -353,7 +353,7 @@ public class Parser {
         consumeKw("call");
 
         NodeList funcall = parseFuncall();
-        
+
         consumeSym(";");
 
         return nodelist()
@@ -366,7 +366,7 @@ public class Parser {
         // consumeKw("call");
 
         NodeList funcall = parseFuncall();
-        
+
         consumeSym(";");
 
         return nodelist()
