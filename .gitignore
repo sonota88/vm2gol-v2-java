@@ -1,0 +1,14 @@
+*~
+/.classpath
+/.project
+/.settings/
+/.gradle/
+/target/
+/build/
+/ignore/
+
+/.mvn/wrapper
+/mvnw
+/mvnw.cmd
+
+z_*
