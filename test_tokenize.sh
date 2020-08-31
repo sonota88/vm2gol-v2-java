@@ -65,4 +65,5 @@ if [ "$ERRS" = "" ]; then
 else
   echo "----"
   echo "FAILED: ${ERRS}"
+  exit 1
 fi
