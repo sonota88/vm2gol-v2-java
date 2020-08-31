@@ -123,11 +123,11 @@ public class Json {
             } else if (re.match("^(-?[0-9]+)", rest)) {
                 String str = re.group(1);
                 int n = Integer.valueOf(str);
-                xs.add(_i(n));
+                xs.add(NodeItem.of(n));
                 pos += str.length();
             } else if (re.match("^\"(.*?)\"", rest)) {
                 String str = re.group(1);
-                xs.add(_s(str));
+                xs.add(NodeItem.of(str));
                 pos += str.length() + 2;
             } else {
                 throw notYetImpl("must not happen");
@@ -135,14 +135,6 @@ public class Json {
         }
 
         return new ParseRetval(xs, pos);
-    }
-
-    private static NodeItem _i(Integer n) {
-        return new NodeItem(n);
-    }
-
-    private static NodeItem _s(String s) {
-        return new NodeItem(s);
     }
 
 }
