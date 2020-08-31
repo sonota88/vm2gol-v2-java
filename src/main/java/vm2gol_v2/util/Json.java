@@ -8,8 +8,6 @@ import static vm2gol_v2.util.Utils.notYetImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,6 +101,8 @@ public class Json {
         int pos = 1;
         NodeList xs = new NodeList();
 
+        Regex re = new Regex();
+
         while (pos <= json.length()) {
             String rest = json.substring(pos);
             
@@ -120,13 +120,13 @@ public class Json {
                     )
             {
                 pos++;
-            } else if (matchNum(rest) != null) {
-                String str = matchNum(rest);
+            } else if (re.match("^(-?[0-9]+)", rest)) {
+                String str = re.group(1);
                 int n = Integer.valueOf(str);
                 xs.add(_i(n));
                 pos += str.length();
-            } else if (matchStr(rest) != null) {
-                String str = matchStr(rest);
+            } else if (re.match("^\"(.*?)\"", rest)) {
+                String str = re.group(1);
                 xs.add(_s(str));
                 pos += str.length() + 2;
             } else {
@@ -143,28 +143,6 @@ public class Json {
 
     private static NodeItem _s(String s) {
         return new NodeItem(s);
-    }
-
-    private static String matchNum(String str) {
-        Pattern p = Pattern.compile("^(-?[0-9]+)");
-        Matcher m = p.matcher(str);
-
-        if (m.find()){
-            return m.group(1);
-        } else {
-            return null;
-        }
-    }
-
-    private static String matchStr(String str) {
-        Pattern p = Pattern.compile("^\"(.*?)\"");
-        Matcher m = p.matcher(str);
-
-        if (m.find()){
-            return m.group(1);
-        } else {
-            return null;
-        }
     }
 
 }
