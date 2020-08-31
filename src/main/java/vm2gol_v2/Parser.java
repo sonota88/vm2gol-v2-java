@@ -231,7 +231,7 @@ public class Parser {
         if (t.strEq(";")) {
             return parseVar_declare();
         } else if (t.strEq("=")) {
-                return parseVar_init();
+            return parseVar_init();
         } else {
             throw unexpected("Unexpected token");
         }
