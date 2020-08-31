@@ -45,7 +45,7 @@ test_nn() {
 
 mkdir -p z_tmp
 
-mvn -DskipTests=true package 1>&2
+mvn --quiet -DskipTests=true package 1>&2
 export DO_BUILD=0
 
 ns=

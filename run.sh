@@ -17,7 +17,7 @@ compile() {
 # --------------------------------
 
 if [ "$DO_BUILD" != "0" ]; then
-  mvn -DskipTests=true package 1>&2
+  mvn --quiet -DskipTests=true package 1>&2
 fi
 
 cmd="$1"
