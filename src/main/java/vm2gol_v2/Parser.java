@@ -489,10 +489,6 @@ public class Parser {
     private NodeList parseStmt() {
         Token t = peek();
 
-        if (t.is(Token.Type.SYM, "}")) {
-            return NodeList.empty();
-        }
-
         switch (t.getStr()) {
         case "set"     : return parseSet();
         case "call"    : return parseCall();
@@ -509,17 +505,8 @@ public class Parser {
     private NodeList parseStmts() {
         NodeList stmts = new NodeList();
 
-        while (true) {
-            if (isEnd()) {
-                break;
-            }
-
-            NodeList stmt = parseStmt();
-            if (stmt.isEmpty()) {
-                break;
-            }
-
-            stmts.add(stmt);
+        while (! peek().is(Token.Type.SYM, "}")) {
+            stmts.add(parseStmt());
         }
 
         return stmts;
