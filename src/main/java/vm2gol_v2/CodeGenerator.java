@@ -125,7 +125,7 @@ public class CodeGenerator {
 
         int labelId = CodeGenerator.nextLabelId();
         String labelThen = String.format("then_%d", labelId);
-        String endLabel = String.format("end_eq_%d", labelId);
+        String labelEnd = String.format("end_eq_%d", labelId);
 
         alines.add("  pop reg_b");
         alines.add("  pop reg_a");
@@ -134,12 +134,12 @@ public class CodeGenerator {
         alines.add("  jump_eq %s", labelThen);
 
         alines.add("  set_reg_a 0");
-        alines.add("  jump %s", endLabel);
+        alines.add("  jump %s", labelEnd);
 
         alines.add("label %s", labelThen);
         alines.add("  set_reg_a 1");
 
-        alines.add("label %s", endLabel);
+        alines.add("label %s", labelEnd);
 
         return alines;
     }
@@ -149,7 +149,7 @@ public class CodeGenerator {
 
         int labelId = CodeGenerator.nextLabelId();
         String labelThen = String.format("then_%d", labelId);
-        String endLabel = String.format("end_neq_%d", labelId);
+        String labelEnd = String.format("end_neq_%d", labelId);
         
         alines.add("  pop reg_b");
         alines.add("  pop reg_a");
@@ -158,12 +158,12 @@ public class CodeGenerator {
         alines.add("  jump_eq %s", labelThen);
 
         alines.add("  set_reg_a 1");
-        alines.add("  jump %s", endLabel);
+        alines.add("  jump %s", labelEnd);
 
         alines.add("label %s", labelThen);
         alines.add("  set_reg_a 0");
 
-        alines.add("label %s", endLabel);
+        alines.add("label %s", labelEnd);
 
         return alines;
     }
