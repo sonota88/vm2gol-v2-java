@@ -526,6 +526,22 @@ public class Parser {
         return stmts;
     }
 
+    private NodeList parseTopStmt() {
+        if (peek().is(Token.Type.KW, "func")) {
+            return parseFunc();
+        } else {
+            throw unexpected("Unexpected token");
+        }
+    }
+
+    private NodeList parseTopStmts() {
+        NodeList topStmts = new NodeList();
+        while (! isEnd()) {
+            topStmts.add(parseTopStmt());
+        }
+        return topStmts;
+    }
+
     private NodeItem parse() {
         NodeList stmts = parseStmts();
 
