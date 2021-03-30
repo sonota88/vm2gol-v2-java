@@ -494,7 +494,6 @@ public class Parser {
         }
 
         switch (t.getStr()) {
-        case "func"    : return parseFunc();
         case "set"     : return parseSet();
         case "call"    : return parseCall();
         case "call_set": return parseCallSet();
