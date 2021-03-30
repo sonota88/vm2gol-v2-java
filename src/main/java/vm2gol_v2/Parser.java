@@ -181,7 +181,15 @@ public class Parser {
         consumeSym(")");
 
         consumeSym("{");
-        NodeList stmts = parseStmts();
+
+        NodeList stmts = new NodeList();
+        while (! peek().is(Token.Type.SYM, "}")) {
+            if (peek().is(Token.Type.KW, "var")) {
+                stmts.add(parseVar());
+            } else {
+                stmts.add(parseStmt());
+            }
+        }
         consumeSym("}");
 
         return nodelist()
@@ -487,7 +495,6 @@ public class Parser {
 
         switch (t.getStr()) {
         case "func"    : return parseFunc();
-        case "var"     : return parseVar();
         case "set"     : return parseSet();
         case "call"    : return parseCall();
         case "call_set": return parseCallSet();
