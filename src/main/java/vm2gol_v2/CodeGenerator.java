@@ -451,10 +451,10 @@ public class CodeGenerator {
         int labelId = CodeGenerator.nextLabelId();
 
         int whenIdx = -1;
-        List<Alines> thenBodies = new ArrayList<>(); 
 
         String labelEnd = String.format("end_case_%d", labelId);
         String labelWhenHead = String.format("when_%d", labelId);
+        String labelEndWhenHead = String.format("end_when_%d", labelId);
 
         for (NodeItem _whenBlock : whenBlocks.getList()) {
             NodeList whenBlock = _whenBlock.getItems();
@@ -478,26 +478,18 @@ public class CodeGenerator {
 
                 alines.add("  compare");
                 alines.add("  jump_eq %s_%d", labelWhenHead, whenIdx);
+                alines.add("  jump %s_%d", labelEndWhenHead, whenIdx);
 
-                {
-                    Alines thenAlines = new Alines();
-                    thenAlines.add("label %s_%d", labelWhenHead, whenIdx);
-                    thenAlines.addAll(
-                            genStmts(fnArgNames, lvarNames, rest)
-                            );
-                    thenAlines.add("  jump %s", labelEnd);
-    
-                    thenBodies.add(thenAlines);
-                }
+                alines.add("label %s_%d", labelWhenHead, whenIdx);
+
+                alines.addAll(
+                    genStmts(fnArgNames, lvarNames, rest)
+                );
+
+                alines.add("label %s_%d", labelEndWhenHead, whenIdx);
             } else {
                 throw unsupported(condHead);
             }
-        }
-
-        alines.add("  jump %s", labelEnd);
-
-        for (Alines thenAlines : thenBodies) {
-            alines.addAll(thenAlines);
         }
 
         alines.add("label %s", labelEnd);
