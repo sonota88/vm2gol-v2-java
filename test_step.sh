@@ -60,17 +60,16 @@ mkdir -p z_tmp
 mvn --quiet -DskipTests=true package 1>&2
 export DO_BUILD=0
 
-ns=
-
 if [ $# -eq 1 ]; then
-  ns="$1"
+  n="$1"
+  test_nn $(printf "%02d" $n)
 else
   ns="$(seq 1 26)"
+  for n in $ns; do
+    test_nn $(printf "%02d" $n)
+  done
 fi
 
-for n in $ns; do
-  test_nn $(printf "%02d" $n)
-done
 
 if [ "$ERRS" = "" ]; then
   echo "ok"
