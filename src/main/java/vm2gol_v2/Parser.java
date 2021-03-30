@@ -543,12 +543,12 @@ public class Parser {
     }
 
     private NodeItem parse() {
-        NodeList stmts = parseTopStmts();
+        NodeList topStmts = parseTopStmts();
 
         return NodeItem.of(
                 nodelist()
-                .add("stmts")
-                .addAll(stmts)
+                .add("top_stmts")
+                .addAll(topStmts)
                 );
     }
 
