@@ -411,9 +411,13 @@ public class CodeGenerator {
 
         int labelId = CodeGenerator.nextLabelId();
 
+        String labelBegin = String.format("while_%d", labelId);
+        String labelEnd = String.format("end_while_%d", labelId);
+        String labelTrue = String.format("true_%d", labelId);
+
         alines.add("");
 
-        alines.add("label while_%d", labelId);
+        alines.add("label %s", labelBegin);
 
         // 条件の評価
         alines.addAll(
@@ -422,18 +426,18 @@ public class CodeGenerator {
         alines.add("  set_reg_b 1");
         alines.add("  compare");
 
-        alines.add("  jump_eq true_%d", labelId);
+        alines.add("  jump_eq %s", labelTrue);
 
-        alines.add("  jump end_while_%d", labelId);
+        alines.add("  jump %s", labelEnd);
 
-        alines.add("label true_%d", labelId);
+        alines.add("label %s", labelTrue);
         alines.addAll(
                 genStmts(fnArgNames, lvarNames, body)
                 );
         
-        alines.add("  jump while_%d", labelId);
+        alines.add("  jump %s", labelBegin);
 
-        alines.add("label end_while_%d", labelId);
+        alines.add("label %s", labelEnd);
         alines.add("");
 
         return alines;
