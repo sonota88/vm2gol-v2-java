@@ -13,6 +13,6 @@ func ret_lvar() {
 }
 
 func main() {
-  ret_vram();
-  ret_lvar();
+  call ret_vram();
+  call ret_lvar();
 }

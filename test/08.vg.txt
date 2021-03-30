@@ -4,5 +4,5 @@ func sub(a) {
 }
 
 func main() {
-  sub(1);
+  call sub(1);
 }
