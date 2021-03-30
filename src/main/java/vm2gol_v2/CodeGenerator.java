@@ -194,19 +194,19 @@ public class CodeGenerator {
     private Alines genCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
         Alines alines = new Alines();
 
+        String pushArg;
+
         switch (fnArg.type) {
         case INT:
-            alines.add("  push %d", fnArg.getIntVal());
+            pushArg = String.format("%d", fnArg.getIntVal());
             break;
 
         case STR:
             String fnArgStr = fnArg.getStrVal();
             if (fnArgNames.contains(fnArgStr)) {
-                String ref = toFnArgRef(fnArgNames, fnArgStr);
-                alines.add("  push %s", ref);
+                pushArg = toFnArgRef(fnArgNames, fnArgStr);
             } else if (lvarNames.contains(fnArgStr)) {
-                String ref = toLvarRef(lvarNames, fnArgStr);
-                alines.add("  push %s", ref);
+                pushArg = toLvarRef(lvarNames, fnArgStr);
             } else {
                 throw unsupported(fnArg);
             }
@@ -215,6 +215,8 @@ public class CodeGenerator {
         default:
             throw unsupported(fnArg);
         }
+
+        alines.add("  push %s", pushArg);
 
         return alines;
     }
