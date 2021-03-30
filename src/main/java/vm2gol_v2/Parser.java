@@ -543,7 +543,7 @@ public class Parser {
     }
 
     private NodeItem parse() {
-        NodeList stmts = parseStmts();
+        NodeList stmts = parseTopStmts();
 
         return NodeItem.of(
                 nodelist()
