@@ -52,19 +52,19 @@ public class CodeGenerator {
         return String.format("[bp-%d]", i + 1);
     }
 
-    private Alines codegenVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
+    private Alines genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         Alines alines = new Alines();
 
         alines.add("  sub_sp 1");
 
         if (stmtRest.size() == 2) {
-            alines.addAll(codegenSet(fnArgNames, lvarNames, stmtRest));
+            alines.addAll(genSet(fnArgNames, lvarNames, stmtRest));
         }
 
         return alines;
     }
 
-    private Alines codegenExp_push(Names fnArgNames, Names lvarNames, NodeItem val) {
+    private Alines genExp_push(Names fnArgNames, Names lvarNames, NodeItem val) {
         Alines alines = new Alines();
         
         String pushArg;
@@ -85,7 +85,7 @@ public class CodeGenerator {
             break;
         case LIST:
             alines.addAll(
-                    codegenExp(fnArgNames, lvarNames, val)
+                    genExp(fnArgNames, lvarNames, val)
                     );
             pushArg = "reg_a";
             break;
@@ -98,7 +98,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenExp_add() {
+    private Alines genExp_add() {
         Alines alines = new Alines();
 
         alines.add("  pop reg_b");
@@ -109,7 +109,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenExp_mult() {
+    private Alines genExp_mult() {
         Alines alines = new Alines();
 
         alines.add("  pop reg_b");
@@ -120,7 +120,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenExp_eq() {
+    private Alines genExp_eq() {
         Alines alines = new Alines();
 
         int labelId = CodeGenerator.nextLabelId();
@@ -144,7 +144,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenExp_neq() {
+    private Alines genExp_neq() {
         Alines alines = new Alines();
 
         int labelId = CodeGenerator.nextLabelId();
@@ -168,7 +168,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenExp(Names fnArgNames, Names lvarNames, NodeItem exp) {
+    private Alines genExp(Names fnArgNames, Names lvarNames, NodeItem exp) {
         Alines alines = new Alines();
 
         NodeItem operator = exp.getItems().first();
@@ -177,13 +177,13 @@ public class CodeGenerator {
         NodeItem termL = args.get(0);
         NodeItem termR = args.get(1);
 
-        alines.addAll(codegenExp_push(fnArgNames, lvarNames, termL));
-        alines.addAll(codegenExp_push(fnArgNames, lvarNames, termR));
+        alines.addAll(genExp_push(fnArgNames, lvarNames, termL));
+        alines.addAll(genExp_push(fnArgNames, lvarNames, termR));
 
-        if      (operator.strEq("+"  )) { alines.addAll(codegenExp_add() ); }
-        else if (operator.strEq("*"  )) { alines.addAll(codegenExp_mult()); }
-        else if (operator.strEq("eq" )) { alines.addAll(codegenExp_eq()  ); }
-        else if (operator.strEq("neq")) { alines.addAll(codegenExp_neq() ); }
+        if      (operator.strEq("+"  )) { alines.addAll(genExp_add() ); }
+        else if (operator.strEq("*"  )) { alines.addAll(genExp_mult()); }
+        else if (operator.strEq("eq" )) { alines.addAll(genExp_eq()  ); }
+        else if (operator.strEq("neq")) { alines.addAll(genExp_neq() ); }
         else {
             throw unsupported(operator);
         }
@@ -191,7 +191,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
+    private Alines genCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
         Alines alines = new Alines();
 
         switch (fnArg.type) {
@@ -219,7 +219,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
+    private Alines genCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         Alines alines = new Alines();
 
         String fnName = stmtRest.first().getStrVal();
@@ -227,11 +227,11 @@ public class CodeGenerator {
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
             alines.addAll(
-                    codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg)
+                    genCall_pushFnArg(fnArgNames, lvarNames, fnArg)
                     );
         }
 
-        alines.addAll(codegenVmComment("call  " + fnName));
+        alines.addAll(genVmComment("call  " + fnName));
         alines.add("  call %s", fnName);
 
         alines.add("  add_sp %d", fnArgs.size());
@@ -239,7 +239,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
+    private Alines genCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         Alines alines = new Alines();
 
         String lvarName = stmtRest.first().getStrVal();
@@ -250,11 +250,11 @@ public class CodeGenerator {
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
             alines.addAll(
-                    codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg)
+                    genCall_pushFnArg(fnArgNames, lvarNames, fnArg)
                     );
         }
 
-        alines.addAll(codegenVmComment("call_set  " + fnName));
+        alines.addAll(genVmComment("call_set  " + fnName));
         alines.add("  call %s", fnName);
         alines.add("  add_sp %d", fnArgs.size());
 
@@ -284,7 +284,7 @@ public class CodeGenerator {
         }
     }
 
-    private Alines codegenSet(Names fnArgNames, Names lvarNames, NodeList rest) {
+    private Alines genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
         Alines alines = new Alines();
 
         NodeItem dest = rest.get(0);
@@ -323,7 +323,7 @@ public class CodeGenerator {
             break;
 
         case LIST:
-            alines.addAll(codegenExp(fnArgNames, lvarNames, exp));
+            alines.addAll(genExp(fnArgNames, lvarNames, exp));
             srcVal = "reg_a";
             break;
 
@@ -356,7 +356,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenReturn(Names lvarNames, NodeList stmtRest) {
+    private Alines genReturn(Names lvarNames, NodeList stmtRest) {
         Alines alines = new Alines();
 
         NodeItem retval = stmtRest.first();
@@ -395,7 +395,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenVmComment(String comment) {
+    private Alines genVmComment(String comment) {
         Alines alines = new Alines();
 
         alines.add("  _cmt " + StringUtils.replace(comment, " ", "~"));
@@ -403,7 +403,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
+    private Alines genWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
         Alines alines = new Alines();
 
         NodeItem condExp = rest.first();
@@ -417,7 +417,7 @@ public class CodeGenerator {
 
         // 条件の評価
         alines.addAll(
-                codegenExp(fnArgNames, lvarNames, condExp)
+                genExp(fnArgNames, lvarNames, condExp)
                 );
         alines.add("  set_reg_b 1");
         alines.add("  compare");
@@ -428,7 +428,7 @@ public class CodeGenerator {
 
         alines.add("label true_%d", labelId);
         alines.addAll(
-                codegenStmts(fnArgNames, lvarNames, body)
+                genStmts(fnArgNames, lvarNames, body)
                 );
         
         alines.add("  jump while_%d", labelId);
@@ -439,7 +439,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenCase(Names fnArgNames, Names lvarNames, NodeList whenBlocks) {
+    private Alines genCase(Names fnArgNames, Names lvarNames, NodeList whenBlocks) {
         Alines alines = new Alines();
 
         int labelId = CodeGenerator.nextLabelId();
@@ -463,7 +463,7 @@ public class CodeGenerator {
 
             if (condHead.strEq("eq")) {
                 alines.addAll(
-                        codegenExp(fnArgNames, lvarNames, cond)
+                        genExp(fnArgNames, lvarNames, cond)
                         );
                 alines.add("  set_reg_b 1");
 
@@ -474,7 +474,7 @@ public class CodeGenerator {
                     Alines thenAlines = new Alines();
                     thenAlines.add("label when_%d_%d", labelId, whenIdx);
                     thenAlines.addAll(
-                            codegenStmts(fnArgNames, lvarNames, rest)
+                            genStmts(fnArgNames, lvarNames, rest)
                             );
                     thenAlines.add("  jump end_case_%d", labelId);
     
@@ -496,35 +496,35 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
+    private Alines genStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
         String stmtHead = stmt.first().getStrVal();
         NodeList stmtRest = stmt.rest();
 
         switch (stmtHead) {
-        case "set"     : return codegenSet(    fnArgNames, lvarNames, stmtRest);
-        case "call"    : return codegenCall(   fnArgNames, lvarNames, stmtRest);
-        case "call_set": return codegenCallSet(fnArgNames, lvarNames, stmtRest);
-        case "return"  : return codegenReturn(             lvarNames, stmtRest);
-        case "while"   : return codegenWhile(  fnArgNames, lvarNames, stmtRest);
-        case "case"    : return codegenCase(   fnArgNames, lvarNames, stmtRest);
-        case "_cmt"    : return codegenVmComment(stmtRest.get(0).getStrVal());
+        case "set"     : return genSet(    fnArgNames, lvarNames, stmtRest);
+        case "call"    : return genCall(   fnArgNames, lvarNames, stmtRest);
+        case "call_set": return genCallSet(fnArgNames, lvarNames, stmtRest);
+        case "return"  : return genReturn(             lvarNames, stmtRest);
+        case "while"   : return genWhile(  fnArgNames, lvarNames, stmtRest);
+        case "case"    : return genCase(   fnArgNames, lvarNames, stmtRest);
+        case "_cmt"    : return genVmComment(stmtRest.get(0).getStrVal());
         default:
             throw unsupported(stmtHead);
         }
     }
 
-    private Alines codegenStmts(Names fnArgNames, Names lvarNames, NodeList stmts) {
+    private Alines genStmts(Names fnArgNames, Names lvarNames, NodeList stmts) {
         Alines alines = new Alines();
 
         for (NodeItem _stmt : stmts.getList()) {
             NodeList stmt = _stmt.getItems();
-            alines.addAll(codegenStmt(fnArgNames, lvarNames, stmt));
+            alines.addAll(genStmt(fnArgNames, lvarNames, stmt));
         }
 
         return alines;
     }
 
-    private Alines codegenFuncDef(NodeList rest) {
+    private Alines genFuncDef(NodeList rest) {
         Alines alines = new Alines();
 
         String fnName = rest.get(0).getStrVal();
@@ -547,11 +547,11 @@ public class CodeGenerator {
                 NodeList stmtRest = _stmt.rest(); 
                 lvarNames.add(stmtRest.first().getStrVal());
                 alines.addAll(
-                        codegenVar(fnArgNames, lvarNames, stmtRest)
+                        genVar(fnArgNames, lvarNames, stmtRest)
                         );
             } else {
                 alines.addAll(
-                        codegenStmt(fnArgNames, lvarNames, _stmt)
+                        genStmt(fnArgNames, lvarNames, _stmt)
                         );
             }
         }
@@ -564,7 +564,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines codegenTopStmts(NodeList rest) {
+    private Alines genTopStmts(NodeList rest) {
         Alines alines = new Alines();
 
         for (NodeItem stmt : rest.getList()) {
@@ -573,11 +573,11 @@ public class CodeGenerator {
 
             if (stmtHead.strEq("func")) {
                 alines.addAll(
-                        codegenFuncDef(stmtRest)
+                        genFuncDef(stmtRest)
                         );
             } else if (stmtHead.strEq("_cmt")) {
                 alines.addAll(
-                        codegenVmComment(stmtRest.first().getStrVal())
+                        genVmComment(stmtRest.first().getStrVal())
                         );
             } else {
                 throw unsupported(stmtHead);
@@ -596,7 +596,7 @@ public class CodeGenerator {
         // NodeItem head = nl.first();
         NodeList rest = nl.rest();
         alines.addAll(
-                codegenTopStmts(rest)
+                genTopStmts(rest)
                 );
 
         return alines;
