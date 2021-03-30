@@ -365,7 +365,7 @@ public class CodeGenerator {
 
         switch (retval.type) {
         case INT:
-            alines.add("  set_reg_a %d", retval.getIntVal());
+            alines.add("  cp %d reg_a", retval.getIntVal());
             break;
 
         case STR:
