@@ -64,7 +64,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines genExp_push(Names fnArgNames, Names lvarNames, NodeItem val) {
+    private Alines genExpr_push(Names fnArgNames, Names lvarNames, NodeItem val) {
         Alines alines = new Alines();
         
         String pushArg;
@@ -85,7 +85,7 @@ public class CodeGenerator {
             break;
         case LIST:
             alines.addAll(
-                    genExp(fnArgNames, lvarNames, val)
+                    genExpr(fnArgNames, lvarNames, val)
                     );
             pushArg = "reg_a";
             break;
@@ -98,7 +98,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines genExp_add() {
+    private Alines genExpr_add() {
         Alines alines = new Alines();
 
         alines.add("  pop reg_b");
@@ -109,7 +109,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines genExp_mult() {
+    private Alines genExpr_mult() {
         Alines alines = new Alines();
 
         alines.add("  pop reg_b");
@@ -120,7 +120,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines genExp_eq() {
+    private Alines genExpr_eq() {
         Alines alines = new Alines();
 
         int labelId = CodeGenerator.nextLabelId();
@@ -144,7 +144,7 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines genExp_neq() {
+    private Alines genExpr_neq() {
         Alines alines = new Alines();
 
         int labelId = CodeGenerator.nextLabelId();
@@ -168,22 +168,22 @@ public class CodeGenerator {
         return alines;
     }
 
-    private Alines genExp(Names fnArgNames, Names lvarNames, NodeItem exp) {
+    private Alines genExpr(Names fnArgNames, Names lvarNames, NodeItem expr) {
         Alines alines = new Alines();
 
-        NodeItem operator = exp.getItems().first();
-        NodeList args = exp.getItems().rest();
+        NodeItem operator = expr.getItems().first();
+        NodeList args = expr.getItems().rest();
 
         NodeItem termL = args.get(0);
         NodeItem termR = args.get(1);
 
-        alines.addAll(genExp_push(fnArgNames, lvarNames, termL));
-        alines.addAll(genExp_push(fnArgNames, lvarNames, termR));
+        alines.addAll(genExpr_push(fnArgNames, lvarNames, termL));
+        alines.addAll(genExpr_push(fnArgNames, lvarNames, termR));
 
-        if      (operator.strEq("+"  )) { alines.addAll(genExp_add() ); }
-        else if (operator.strEq("*"  )) { alines.addAll(genExp_mult()); }
-        else if (operator.strEq("eq" )) { alines.addAll(genExp_eq()  ); }
-        else if (operator.strEq("neq")) { alines.addAll(genExp_neq() ); }
+        if      (operator.strEq("+"  )) { alines.addAll(genExpr_add() ); }
+        else if (operator.strEq("*"  )) { alines.addAll(genExpr_mult()); }
+        else if (operator.strEq("eq" )) { alines.addAll(genExpr_eq()  ); }
+        else if (operator.strEq("neq")) { alines.addAll(genExpr_neq() ); }
         else {
             throw unsupported(operator);
         }
@@ -288,47 +288,47 @@ public class CodeGenerator {
         Alines alines = new Alines();
 
         NodeItem dest = rest.get(0);
-        NodeItem exp = rest.get(1);
+        NodeItem expr = rest.get(1);
 
         String srcVal;
-        switch (exp.type) {
+        switch (expr.type) {
         case INT:
-            srcVal = String.valueOf(exp.getIntVal());
+            srcVal = String.valueOf(expr.getIntVal());
             break;
 
         case STR:
-            String expStr = exp.getStrVal();
-            if (fnArgNames.contains(expStr)) {
-                srcVal = toFnArgRef(fnArgNames, expStr);
-            } else if (lvarNames.contains(expStr)) {
-                srcVal = toLvarRef(lvarNames, expStr);
-            } else if (matchVramAddr(expStr).isPresent()) {
-                int vramAddr = matchVramAddr(expStr).get();
+            String exprStr = expr.getStrVal();
+            if (fnArgNames.contains(exprStr)) {
+                srcVal = toFnArgRef(fnArgNames, exprStr);
+            } else if (lvarNames.contains(exprStr)) {
+                srcVal = toLvarRef(lvarNames, exprStr);
+            } else if (matchVramAddr(exprStr).isPresent()) {
+                int vramAddr = matchVramAddr(exprStr).get();
                 alines.add("  get_vram %d reg_a", vramAddr);
                 srcVal = "reg_a";
-            } else if (matchVramRef(expStr).isPresent()) {
-                String vramRef = matchVramRef(expStr).get();
+            } else if (matchVramRef(exprStr).isPresent()) {
+                String vramRef = matchVramRef(exprStr).get();
 
                 if (lvarNames.contains(vramRef)) {
                     String ref = toLvarRef(lvarNames, vramRef);
                     alines.add("  get_vram %s reg_a", ref);
                 } else {
-                    throw unsupported(exp);
+                    throw unsupported(expr);
                 }
                 srcVal = "reg_a";
 
             } else {
-                throw unsupported(exp);
+                throw unsupported(expr);
             }
             break;
 
         case LIST:
-            alines.addAll(genExp(fnArgNames, lvarNames, exp));
+            alines.addAll(genExpr(fnArgNames, lvarNames, expr));
             srcVal = "reg_a";
             break;
 
         default:
-            throw invalidType(exp);
+            throw invalidType(expr);
         }
 
         String destStr = dest.getStrVal();
@@ -406,7 +406,7 @@ public class CodeGenerator {
     private Alines genWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
         Alines alines = new Alines();
 
-        NodeItem condExp = rest.first();
+        NodeItem condExpr = rest.first();
         NodeList body = rest.rest().first().getItems();
 
         int labelId = CodeGenerator.nextLabelId();
@@ -421,7 +421,7 @@ public class CodeGenerator {
 
         // 条件の評価
         alines.addAll(
-                genExp(fnArgNames, lvarNames, condExp)
+                genExpr(fnArgNames, lvarNames, condExpr)
                 );
         alines.add("  set_reg_b 1");
         alines.add("  compare");
@@ -470,7 +470,7 @@ public class CodeGenerator {
 
             if (condHead.strEq("eq")) {
                 alines.addAll(
-                        genExp(fnArgNames, lvarNames, cond)
+                        genExpr(fnArgNames, lvarNames, cond)
                         );
                 alines.add("  set_reg_b 1");
 
