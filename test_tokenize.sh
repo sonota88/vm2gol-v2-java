@@ -22,9 +22,9 @@ test_nn() {
 
   echo "test_${nn}"
 
-  local exp_tokens_file="${TEST_DIR}/tokenize_exp_${nn}.txt"
+  local exp_tokens_file="${TEST_DIR}/lex/exp_${nn}.txt"
 
-  cat ${TEST_DIR}/tokenize_${nn}.vg.txt \
+  cat ${TEST_DIR}/lex/${nn}.vg.txt \
     | ./run.sh tokenize \
     > $temp_tokens_file
   if [ $? -ne 0 ]; then
