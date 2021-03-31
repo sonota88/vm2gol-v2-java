@@ -64,31 +64,29 @@ public class CodeGenerator {
     }
 
     private void genExpr_push(Names fnArgNames, Names lvarNames, NodeItem val) {
-        String pushArg;
         switch (val.type) {
         case INT:
-            pushArg = String.valueOf(val.getIntVal());
+            puts("  cp %d reg_a", val.getIntVal());
             break;
         case STR:
             if (fnArgNames.contains(val.getStrVal())) {
                 String fnArgName = val.getStrVal();
-                pushArg = toFnArgRef(fnArgNames, fnArgName);
+                String cpSrc = toFnArgRef(fnArgNames, fnArgName);
+                puts("  cp %s reg_a", cpSrc);
             } else if (lvarNames.contains(val.getStrVal())) {
                 String lvarName = val.getStrVal();
-                pushArg = toLvarRef(lvarNames, lvarName);
+                String cpSrc = toLvarRef(lvarNames, lvarName);
+                puts("  cp %s reg_a", cpSrc);
             } else {
                 throw unsupported(val);
             }
             break;
         case LIST:
             _genExpr_binary(fnArgNames, lvarNames, val);
-            pushArg = "reg_a";
             break;
         default:
             throw invalidType(val);
         }
-
-        puts("  push " + pushArg);
     }
 
     private void genExpr_add() {
@@ -153,7 +151,9 @@ public class CodeGenerator {
         NodeItem termR = args.get(1);
 
         genExpr_push(fnArgNames, lvarNames, termL);
+        puts("  push reg_a");
         genExpr_push(fnArgNames, lvarNames, termR);
+        puts("  push reg_a");
 
         if      (operator.strEq("+"  )) { genExpr_add() ; }
         else if (operator.strEq("*"  )) { genExpr_mult(); }
