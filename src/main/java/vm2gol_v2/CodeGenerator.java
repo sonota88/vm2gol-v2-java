@@ -152,6 +152,9 @@ public class CodeGenerator {
                 String fnArgName = expr.getStrVal();
                 String cpSrc = toFnArgRef(fnArgNames, fnArgName);
                 puts("  cp %s reg_a", cpSrc);
+            } else if (matchVramAddr(expr.getStrVal()).isPresent()) {
+                int vramAddr = matchVramAddr(expr.getStrVal()).get();
+                puts("  get_vram %d reg_a", vramAddr);
             } else if (matchVramRef(expr.getStrVal()).isPresent()) {
                 String vramRef = matchVramRef(expr.getStrVal()).get();
 
