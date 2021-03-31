@@ -164,38 +164,12 @@ public class CodeGenerator {
         }
     }
 
-    private void genCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
-        String pushArg;
-
-        switch (fnArg.type) {
-        case INT:
-            pushArg = String.format("%d", fnArg.getIntVal());
-            break;
-
-        case STR:
-            String fnArgStr = fnArg.getStrVal();
-            if (fnArgNames.contains(fnArgStr)) {
-                pushArg = toFnArgRef(fnArgNames, fnArgStr);
-            } else if (lvarNames.contains(fnArgStr)) {
-                pushArg = toLvarRef(lvarNames, fnArgStr);
-            } else {
-                throw unsupported(fnArg);
-            }
-            break;
-
-        default:
-            throw unsupported(fnArg);
-        }
-
-        puts("  cp %s reg_a", pushArg);
-    }
-
     private void genCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         String fnName = stmtRest.first().getStrVal();
         NodeList fnArgs = stmtRest.rest();
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
-            genCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+            genExpr(fnArgNames, lvarNames, fnArg);
             puts("  push reg_a");
         }
 
@@ -213,7 +187,7 @@ public class CodeGenerator {
         NodeList fnArgs = fnTemp.rest();
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
-            genCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+            genExpr(fnArgNames, lvarNames, fnArg);
             puts("  push reg_a");
         }
 
