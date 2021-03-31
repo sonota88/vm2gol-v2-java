@@ -411,6 +411,15 @@ public class CodeGenerator {
         }
     }
 
+    private void genBuiltinSetVram() {
+        puts("");
+        puts("label set_vram");
+        asmPrologue();
+        puts("  set_vram [bp:2] [bp:3]"); // vram_addr value
+        asmEpilogue();
+        puts("  ret");
+    }
+
     void codegen(NodeList nl) {
         puts("  call main");
         puts("  exit");
@@ -418,6 +427,10 @@ public class CodeGenerator {
         // NodeItem head = nl.first();
         NodeList rest = nl.rest();
         genTopStmts(rest);
+
+        puts("#>builtins");
+        genBuiltinSetVram();
+        puts("#<builtins");
     }
 
 }
