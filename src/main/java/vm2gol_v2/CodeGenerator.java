@@ -152,6 +152,15 @@ public class CodeGenerator {
                 String fnArgName = expr.getStrVal();
                 String cpSrc = toFnArgRef(fnArgNames, fnArgName);
                 puts("  cp %s reg_a", cpSrc);
+            } else if (matchVramRef(expr.getStrVal()).isPresent()) {
+                String vramRef = matchVramRef(expr.getStrVal()).get();
+
+                if (lvarNames.contains(vramRef)) {
+                    String ref = toLvarRef(lvarNames, vramRef);
+                    puts("  get_vram %s reg_a", ref);
+                } else {
+                    throw unsupported(expr);
+                }
             } else {
                 throw unsupported(expr);
             }
