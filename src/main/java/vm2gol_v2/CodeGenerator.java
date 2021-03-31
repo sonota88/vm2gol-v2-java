@@ -176,9 +176,9 @@ public class CodeGenerator {
         }
     }
 
-    private void genCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
-        String fnName = stmtRest.first().getStrVal();
-        NodeList fnArgs = stmtRest.rest();
+    private void genCall(Names fnArgNames, Names lvarNames, NodeList funcall) {
+        String fnName = funcall.first().getStrVal();
+        NodeList fnArgs = funcall.rest();
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
             genExpr(fnArgNames, lvarNames, fnArg);
@@ -193,9 +193,9 @@ public class CodeGenerator {
 
     private void genCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         String lvarName = stmtRest.first().getStrVal();
-        NodeList fnTemp = stmtRest.get(1).getItems();
+        NodeList funcall = stmtRest.get(1).getItems();
 
-        genCall(fnArgNames, lvarNames, fnTemp);
+        genCall(fnArgNames, lvarNames, funcall);
 
         String ref = toLvarRef(lvarNames, lvarName);
         puts("  cp reg_a %s", ref);
