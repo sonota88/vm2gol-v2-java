@@ -187,7 +187,7 @@ public class CodeGenerator {
             throw unsupported(fnArg);
         }
 
-        puts("  push %s", pushArg);
+        puts("  cp %s reg_a", pushArg);
     }
 
     private void genCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
@@ -196,6 +196,7 @@ public class CodeGenerator {
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
             genCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+            puts("  push reg_a");
         }
 
         genVmComment("call  " + fnName);
@@ -213,6 +214,7 @@ public class CodeGenerator {
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
             genCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+            puts("  push reg_a");
         }
 
         genVmComment("call_set  " + fnName);
