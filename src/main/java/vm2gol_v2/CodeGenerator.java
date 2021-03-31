@@ -88,11 +88,11 @@ public class CodeGenerator {
         puts("  compare");
         puts("  jump_eq %s", labelThen);
 
-        puts("  set_reg_a 0");
+        puts("  cp 0 reg_a");
         puts("  jump %s", labelEnd);
 
         puts("label %s", labelThen);
-        puts("  set_reg_a 1");
+        puts("  cp 1 reg_a");
 
         puts("label %s", labelEnd);
     }
@@ -108,11 +108,11 @@ public class CodeGenerator {
         puts("  compare");
         puts("  jump_eq %s", labelThen);
 
-        puts("  set_reg_a 1");
+        puts("  cp 1 reg_a");
         puts("  jump %s", labelEnd);
 
         puts("label %s", labelThen);
-        puts("  set_reg_a 0");
+        puts("  cp 0 reg_a");
 
         puts("label %s", labelEnd);
     }
@@ -286,7 +286,7 @@ public class CodeGenerator {
 
         // 条件の評価
         genExpr(fnArgNames, lvarNames, condExpr);
-        puts("  set_reg_b 1");
+        puts("  cp 1 reg_b");
         puts("  compare");
 
         puts("  jump_eq %s", labelTrue);
@@ -324,7 +324,7 @@ public class CodeGenerator {
                     );
 
                 genExpr(fnArgNames, lvarNames, cond);
-                puts("  set_reg_b 1");
+                puts("  cp 1 reg_b");
 
                 puts("  compare");
                 puts("  jump_eq %s_%d", labelWhenHead, whenIdx);
