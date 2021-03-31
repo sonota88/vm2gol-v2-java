@@ -420,6 +420,15 @@ public class CodeGenerator {
         puts("  ret");
     }
 
+    private void genBuiltinGetVram() {
+        puts("");
+        puts("label set_vram");
+        asmPrologue();
+        puts("  set_vram [bp:2] reg_a"); // vram_addr dest
+        asmEpilogue();
+        puts("  ret");
+    }
+
     void codegen(NodeList nl) {
         puts("  call main");
         puts("  exit");
@@ -430,6 +439,7 @@ public class CodeGenerator {
 
         puts("#>builtins");
         genBuiltinSetVram();
+        genBuiltinGetVram();
         puts("#<builtins");
     }
 
