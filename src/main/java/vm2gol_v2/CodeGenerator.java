@@ -81,7 +81,7 @@ public class CodeGenerator {
             }
             break;
         case LIST:
-            genExpr(fnArgNames, lvarNames, val);
+            _genExpr_binary(fnArgNames, lvarNames, val);
             pushArg = "reg_a";
             break;
         default:
@@ -145,7 +145,7 @@ public class CodeGenerator {
         puts("label %s", labelEnd);
     }
 
-    private void genExpr(Names fnArgNames, Names lvarNames, NodeItem expr) {
+    private void _genExpr_binary(Names fnArgNames, Names lvarNames, NodeItem expr) {
         NodeItem operator = expr.getItems().first();
         NodeList args = expr.getItems().rest();
 
@@ -280,7 +280,7 @@ public class CodeGenerator {
             break;
 
         case LIST:
-            genExpr(fnArgNames, lvarNames, expr);
+            _genExpr_binary(fnArgNames, lvarNames, expr);
             srcVal = "reg_a";
             break;
 
@@ -365,7 +365,7 @@ public class CodeGenerator {
         puts("label %s", labelBegin);
 
         // 条件の評価
-        genExpr(fnArgNames, lvarNames, condExpr);
+        _genExpr_binary(fnArgNames, lvarNames, condExpr);
         puts("  set_reg_b 1");
         puts("  compare");
 
@@ -406,7 +406,7 @@ public class CodeGenerator {
                     );
 
             if (condHead.strEq("eq")) {
-                genExpr(fnArgNames, lvarNames, cond);
+                _genExpr_binary(fnArgNames, lvarNames, cond);
                 puts("  set_reg_b 1");
 
                 puts("  compare");
