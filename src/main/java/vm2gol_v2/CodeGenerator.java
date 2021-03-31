@@ -195,17 +195,7 @@ public class CodeGenerator {
         String lvarName = stmtRest.first().getStrVal();
         NodeList fnTemp = stmtRest.get(1).getItems();
 
-        String fnName = fnTemp.first().getStrVal();
-        NodeList fnArgs = fnTemp.rest();
-
-        for (NodeItem fnArg : fnArgs.reverse().getList()) {
-            genExpr(fnArgNames, lvarNames, fnArg);
-            puts("  push reg_a");
-        }
-
-        genVmComment("call_set  " + fnName);
-        puts("  call %s", fnName);
-        puts("  add_sp %d", fnArgs.size());
+        genCall(fnArgNames, lvarNames, fnTemp);
 
         String ref = toLvarRef(lvarNames, lvarName);
         puts("  cp reg_a %s", ref);
