@@ -44,9 +44,9 @@ public class CodeGenerator {
         return i + 2;
     }
 
-    private String toLvarRef(Names lvarNames, String lvarName) {
+    private int lvarDisp(Names lvarNames, String lvarName) {
         int i = lvarNames.indexOf(lvarName);
-        return String.format("[bp:-%d]", i + 1);
+        return -(i + 1);
     }
 
     private void puts(String line, Object ... params) {
@@ -158,8 +158,8 @@ public class CodeGenerator {
         case STR:
             if (lvarNames.contains(expr.getStrVal())) {
                 String lvarName = expr.getStrVal();
-                String cpSrc = toLvarRef(lvarNames, lvarName);
-                puts("  cp %s reg_a", cpSrc);
+                int disp = lvarDisp(lvarNames, lvarName);
+                puts("  cp [bp:%d] reg_a", disp);
             } else if (fnArgNames.contains(expr.getStrVal())) {
                 String fnArgName = expr.getStrVal();
                 int disp = fnArgDisp(fnArgNames, fnArgName);
@@ -197,8 +197,8 @@ public class CodeGenerator {
 
         genCall(fnArgNames, lvarNames, funcall);
 
-        String ref = toLvarRef(lvarNames, lvarName);
-        puts("  cp reg_a %s", ref);
+        int disp = lvarDisp(lvarNames, lvarName);
+        puts("  cp reg_a [bp:%d]", disp);
     }
 
     private void genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
@@ -210,8 +210,8 @@ public class CodeGenerator {
 
         String destStr = dest.getStrVal();
         if (lvarNames.contains(destStr)) {
-            String lvarRef = toLvarRef(lvarNames, destStr);
-            puts("  cp %s %s", srcVal, lvarRef);
+            int disp = lvarDisp(lvarNames, destStr);
+            puts("  cp %s [bp:%d]", srcVal, disp);
         } else {
             throw unsupported(destStr);
         }
