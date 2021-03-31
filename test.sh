@@ -8,7 +8,7 @@ case $cmd in
     ./test_compile.sh "$@"
     ;;
   all | a*)
-    ./test_tokenize.sh
+    ./test_lex.sh
     ./test_compile.sh
     ;;
 esac
