@@ -258,7 +258,7 @@ public class CodeGenerator {
         puts("");
     }
 
-    private void genCase(Names fnArgNames, Names lvarNames, NodeList whenBlocks) {
+    private void genCase(Names fnArgNames, Names lvarNames, NodeList whenClauses) {
         int labelId = CodeGenerator.nextLabelId();
 
         int whenIdx = -1;
@@ -267,12 +267,12 @@ public class CodeGenerator {
         String labelWhenHead = String.format("when_%d", labelId);
         String labelEndWhenHead = String.format("end_when_%d", labelId);
 
-        for (NodeItem _whenBlock : whenBlocks.getList()) {
-            NodeList whenBlock = _whenBlock.getItems();
+        for (NodeItem _whenClause : whenClauses.getList()) {
+            NodeList whenClause = _whenClause.getItems();
             whenIdx++;
 
-            NodeItem cond = whenBlock.first();
-            NodeList rest = whenBlock.rest();
+            NodeItem cond = whenClause.first();
+            NodeList rest = whenClause.rest();
 
             puts(
                     "  # 条件 %d_%d: %s",
