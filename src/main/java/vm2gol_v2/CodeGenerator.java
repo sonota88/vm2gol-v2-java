@@ -164,6 +164,32 @@ public class CodeGenerator {
         }
     }
 
+    private void genExpr(Names fnArgNames, Names lvarNames, NodeItem expr) {
+        switch (expr.type) {
+        case INT:
+            puts("  cp %d reg_a", expr.getIntVal());
+            break;
+        case STR:
+            if (lvarNames.contains(expr.getStrVal())) {
+                String lvarName = expr.getStrVal();
+                String cpSrc = toLvarRef(lvarNames, lvarName);
+                puts("  cp %s reg_a", cpSrc);
+            } else if (fnArgNames.contains(expr.getStrVal())) {
+                String fnArgName = expr.getStrVal();
+                String cpSrc = toFnArgRef(fnArgNames, fnArgName);
+                puts("  cp %s reg_a", cpSrc);
+            } else {
+                throw unsupported(expr);
+            }
+            break;
+        case LIST:
+            _genExpr_binary(fnArgNames, lvarNames, expr);
+            break;
+        default:
+            throw invalidType(expr);
+        }
+    }
+
     private void genCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
         String pushArg;
 
