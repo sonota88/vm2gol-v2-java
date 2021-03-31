@@ -313,18 +313,18 @@ public class CodeGenerator {
                     labelId, whenIdx, cond.inspect()
                     );
 
-                genExpr(fnArgNames, lvarNames, cond);
-                puts("  cp 1 reg_b");
+            genExpr(fnArgNames, lvarNames, cond);
+            puts("  cp 1 reg_b");
 
-                puts("  compare");
-                puts("  jump_eq %s_%d", labelWhenHead, whenIdx);
-                puts("  jump %s_%d", labelEndWhenHead, whenIdx);
+            puts("  compare");
+            puts("  jump_eq %s_%d", labelWhenHead, whenIdx);
+            puts("  jump %s_%d", labelEndWhenHead, whenIdx);
 
-                puts("label %s_%d", labelWhenHead, whenIdx);
+            puts("label %s_%d", labelWhenHead, whenIdx);
 
-                genStmts(fnArgNames, lvarNames, rest);
+            genStmts(fnArgNames, lvarNames, rest);
 
-                puts("label %s_%d", labelEndWhenHead, whenIdx);
+            puts("label %s_%d", labelEndWhenHead, whenIdx);
         }
 
         puts("label %s", labelEnd);
