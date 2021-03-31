@@ -285,7 +285,7 @@ public class CodeGenerator {
         puts("label %s", labelBegin);
 
         // 条件の評価
-        _genExpr_binary(fnArgNames, lvarNames, condExpr);
+        genExpr(fnArgNames, lvarNames, condExpr);
         puts("  set_reg_b 1");
         puts("  compare");
 
@@ -326,7 +326,7 @@ public class CodeGenerator {
                     );
 
             if (condHead.strEq("eq")) {
-                _genExpr_binary(fnArgNames, lvarNames, cond);
+                genExpr(fnArgNames, lvarNames, cond);
                 puts("  set_reg_b 1");
 
                 puts("  compare");
