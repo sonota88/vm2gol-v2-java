@@ -3,7 +3,7 @@ package vm2gol_v2;
 import vm2gol_v2.util.Regex;
 import vm2gol_v2.util.Utils;
 import vm2gol_v2.type.Token;
-import vm2gol_v2.type.Token.Type;
+import vm2gol_v2.type.Token.Kind;
 
 import static vm2gol_v2.util.Utils.unexpected;
 import static vm2gol_v2.util.Utils.putskv_e;
@@ -46,27 +46,27 @@ class Tokenizer {
 
             } else if (re.match("^\"(.*)\"", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Type.STR, s));
+                tokens.add(new Token(Kind.STR, s));
                 pos += s.length() + 2;
 
             } else if (re.match("^(func|set|var|call_set|call|return|case|while|_cmt)[^a-z_]", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Type.KW, s));
+                tokens.add(new Token(Kind.KW, s));
                 pos += s.length();
 
             } else if (re.match("^(-?[0-9]+)", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Type.INT, s));
+                tokens.add(new Token(Kind.INT, s));
                 pos += s.length();
 
             } else if (re.match("^(==|!=|[(){}=;+*,])", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Type.SYM, s));
+                tokens.add(new Token(Kind.SYM, s));
                 pos += s.length();
 
             } else if (re.match("^([a-z_][a-z0-9_\\[\\]]*)", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Type.IDENT, s));
+                tokens.add(new Token(Kind.IDENT, s));
                 pos += s.length();
 
             } else {

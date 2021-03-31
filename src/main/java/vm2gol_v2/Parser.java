@@ -13,7 +13,7 @@ import vm2gol_v2.type.NodeList;
 import vm2gol_v2.type.Token;
 
 import static vm2gol_v2.util.Utils.notYetImpl;
-import static vm2gol_v2.util.Utils.invalidType;
+import static vm2gol_v2.util.Utils.invalidKind;
 import static vm2gol_v2.util.Utils.unexpected;
 import static vm2gol_v2.util.Utils.unsupported;
 
@@ -69,9 +69,9 @@ public class Parser {
         return peek(0);
     }
 
-    private void assertValue(Token t, Token.Type type, String expected) {
-        if (t.type != type) {
-            throw invalidType(t);
+    private void assertValue(Token t, Token.Kind kind, String expected) {
+        if (t.kind != kind) {
+            throw invalidKind(t);
         }
 
         if (Utils.strEq(t.getStr(), expected)) {
@@ -89,13 +89,13 @@ public class Parser {
     private void assertValue_sym(int pos, String exp) {
         Token t = this.tokens.get(pos);
 
-        assertValue(t, Token.Type.SYM, exp);
+        assertValue(t, Token.Kind.SYM, exp);
     }
 
     private void assertValue_kw(int pos, String exp) {
         Token t = this.tokens.get(pos);
 
-        assertValue(t, Token.Type.KW, exp);
+        assertValue(t, Token.Kind.KW, exp);
     }
 
     private void consumeKw(String s) {
@@ -117,7 +117,7 @@ public class Parser {
     private NodeItem parseArg() {
         Token t = peek();
 
-        switch (t.type) {
+        switch (t.kind) {
         case IDENT:
             pos++;
             return NodeItem.of(t.getStr());
@@ -127,12 +127,12 @@ public class Parser {
             return NodeItem.of(t.getIntVal());
 
         default:
-            throw invalidType(t);
+            throw invalidKind(t);
         }
     }
     
     private NodeItem parseArgs_first() {
-        if (peek().is(Token.Type.SYM, ")")) {
+        if (peek().is(Token.Kind.SYM, ")")) {
             return null;
         }
 
@@ -140,7 +140,7 @@ public class Parser {
     }
 
     private NodeItem parseArgs_rest() {
-        if (peek().is(Token.Type.SYM, ")")) {
+        if (peek().is(Token.Kind.SYM, ")")) {
             return null;
         }
 
@@ -183,8 +183,8 @@ public class Parser {
         consumeSym("{");
 
         NodeList stmts = new NodeList();
-        while (! peek().is(Token.Type.SYM, "}")) {
-            if (peek().is(Token.Type.KW, "var")) {
+        while (! peek().is(Token.Kind.SYM, "}")) {
+            if (peek().is(Token.Kind.KW, "var")) {
                 stmts.add(parseVar());
             } else {
                 stmts.add(parseStmt());
@@ -248,13 +248,13 @@ public class Parser {
     private NodeItem parseExprRight(NodeItem exprL) {
         Token t = peek();
 
-        if (t.is(Token.Type.SYM, ";") || t.is(Token.Type.SYM, ")")) {
+        if (t.is(Token.Kind.SYM, ";") || t.is(Token.Kind.SYM, ")")) {
             return exprL;
         }
 
         NodeList expr;
 
-        if (t.is(Token.Type.SYM, "+")) {
+        if (t.is(Token.Kind.SYM, "+")) {
             consumeSym("+");
             NodeItem exprR = parseExpr();
             expr = nodelist()
@@ -262,7 +262,7 @@ public class Parser {
                     .add(exprL)
                     .add(exprR)
                     ;
-        } else if (t.is(Token.Type.SYM, "*")) {
+        } else if (t.is(Token.Kind.SYM, "*")) {
             consumeSym("*");
             NodeItem exprR = parseExpr();
             expr = nodelist()
@@ -270,7 +270,7 @@ public class Parser {
                     .add(exprL)
                     .add(exprR)
                     ;
-        } else if (t.is(Token.Type.SYM, "==")) {
+        } else if (t.is(Token.Kind.SYM, "==")) {
             consumeSym("==");
             NodeItem exprR = parseExpr();
             expr = nodelist()
@@ -278,7 +278,7 @@ public class Parser {
                     .add(exprL)
                     .add(exprR)
                     ;
-        } else if (t.is(Token.Type.SYM, "!=")) {
+        } else if (t.is(Token.Kind.SYM, "!=")) {
             consumeSym("!=");
             NodeItem exprR = parseExpr();
             expr = nodelist()
@@ -296,7 +296,7 @@ public class Parser {
     private NodeItem parseExpr() {
         Token tl = peek();
 
-        if (tl.is(Token.Type.SYM, "(")) {
+        if (tl.is(Token.Kind.SYM, "(")) {
             consumeSym("(");
             NodeItem exprL = parseExpr();
             consumeSym(")");
@@ -306,7 +306,7 @@ public class Parser {
 
         NodeItem exprL;
 
-        switch (tl.type) {
+        switch (tl.kind) {
         case INT:
             pos++;
             exprL = NodeItem.of(tl.getIntVal());
@@ -318,7 +318,7 @@ public class Parser {
             return parseExprRight(exprL);
 
         default:
-            throw invalidType(tl);
+            throw invalidKind(tl);
         }
     }
 
@@ -393,7 +393,7 @@ public class Parser {
     private NodeList parseReturn() {
         consumeKw("return");
 
-        if (peek().is(Token.Type.SYM, ";")) {
+        if (peek().is(Token.Kind.SYM, ";")) {
             // 引数なしの return
             throw notYetImpl(peek());
         } else {
@@ -427,7 +427,7 @@ public class Parser {
 
     private NodeList parseWhenClause() {
         Token t = peek();
-        if (t.is(Token.Type.SYM, "}")) {
+        if (t.is(Token.Kind.SYM, "}")) {
             return NodeList.empty();
         }
 
@@ -505,7 +505,7 @@ public class Parser {
     private NodeList parseStmts() {
         NodeList stmts = new NodeList();
 
-        while (! peek().is(Token.Type.SYM, "}")) {
+        while (! peek().is(Token.Kind.SYM, "}")) {
             stmts.add(parseStmt());
         }
 
@@ -513,7 +513,7 @@ public class Parser {
     }
 
     private NodeList parseTopStmt() {
-        if (peek().is(Token.Type.KW, "func")) {
+        if (peek().is(Token.Kind.KW, "func")) {
             return parseFunc();
         } else {
             throw unexpected("Unexpected token");

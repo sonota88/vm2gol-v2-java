@@ -2,11 +2,11 @@ package vm2gol_v2.type;
 
 import vm2gol_v2.util.Utils;
 
-import static vm2gol_v2.util.Utils.invalidType;
+import static vm2gol_v2.util.Utils.invalidKind;
 
 public class Token {
 
-    public enum Type {
+    public enum Kind {
         INT("int"),
         STR("str"),
         KW("kw"),
@@ -15,7 +15,7 @@ public class Token {
 
         private String str;
         
-        Type(String s){
+        Kind(String s){
             this.str = s;
         }
 
@@ -23,27 +23,27 @@ public class Token {
             return this.str;
         }
 
-        public static Type of(String str) {
-            for (Type type : Type.values()) {
-                if (Utils.strEq(type.getStr(), str)) {
-                    return type;
+        public static Kind of(String str) {
+            for (Kind kind : Kind.values()) {
+                if (Utils.strEq(kind.getStr(), str)) {
+                    return kind;
                 }
             }
             throw new IllegalArgumentException(str);
         }
     }
     
-    public Type type;
+    public Kind kind;
     private String str;
 
-    public Token(Type type, String val) {
-        this.type = type;
+    public Token(Kind kind, String val) {
+        this.kind = kind;
         this.str = val;
     }
 
     public int getIntVal() {
-        if (this.type != Type.INT) {
-            throw invalidType(this);
+        if (this.kind != Kind.INT) {
+            throw invalidKind(this);
         }
 
         return Integer.valueOf(this.str);
@@ -58,27 +58,27 @@ public class Token {
     }
 
     public boolean strEq(String str) {
-        if (this.type != Type.SYM) {
-            throw invalidType(this);
+        if (this.kind != Kind.SYM) {
+            throw invalidKind(this);
         }
 
         return Utils.strEq(this.str, str);
     }
 
-    public boolean is(Type type, String str) {
-        return this.type == type && Utils.strEq(this.str, str);
+    public boolean is(Kind kind, String str) {
+        return this.kind == kind && Utils.strEq(this.str, str);
     }
 
     public static Token fromLine(String line) {
         int i = line.indexOf(":");
-        String typeStr = line.substring(0, i);
+        String kindStr = line.substring(0, i);
         String val = line.substring(i + 1);
 
-        return new Token(Type.of(typeStr), val);
+        return new Token(Kind.of(kindStr), val);
     }
 
     public String toLine() {
-        return this.type.getStr() + ":" + getStr();
+        return this.kind.getStr() + ":" + getStr();
     }
 
 }

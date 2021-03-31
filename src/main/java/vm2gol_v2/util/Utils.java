@@ -92,4 +92,8 @@ public class Utils {
         return genericException("Invalid type", args);
     }
 
+    public static RuntimeException invalidKind(Object ...args) {
+        return genericException("Invalid kind", args);
+    }
+
 }
