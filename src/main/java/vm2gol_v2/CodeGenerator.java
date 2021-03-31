@@ -39,9 +39,9 @@ public class CodeGenerator {
         return CodeGenerator.labelId;
     }
 
-    private String toFnArgRef(Names fnArgNames, String fnArgName) {
+    private int fnArgDisp(Names fnArgNames, String fnArgName) {
         int i = fnArgNames.indexOf(fnArgName);
-        return String.format("[bp:%d]", i + 2);
+        return i + 2;
     }
 
     private String toLvarRef(Names lvarNames, String lvarName) {
@@ -162,8 +162,8 @@ public class CodeGenerator {
                 puts("  cp %s reg_a", cpSrc);
             } else if (fnArgNames.contains(expr.getStrVal())) {
                 String fnArgName = expr.getStrVal();
-                String cpSrc = toFnArgRef(fnArgNames, fnArgName);
-                puts("  cp %s reg_a", cpSrc);
+                int disp = fnArgDisp(fnArgNames, fnArgName);
+                puts("  cp [bp:%d] reg_a", disp);
             } else {
                 throw unsupported(expr);
             }
