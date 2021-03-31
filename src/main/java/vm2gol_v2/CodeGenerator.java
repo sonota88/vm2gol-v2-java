@@ -263,37 +263,7 @@ public class CodeGenerator {
 
     private void genReturn(Names lvarNames, NodeList stmtRest) {
         NodeItem retval = stmtRest.first();
-
-        switch (retval.type) {
-        case INT:
-            puts("  cp %d reg_a", retval.getIntVal());
-            break;
-
-        case STR:
-            String retvalStr = retval.getStrVal();
-
-            if (matchVramRef(retvalStr).isPresent()) {
-
-                String vramRef = matchVramRef(retvalStr).get();
-                
-                if (lvarNames.contains(vramRef)) {
-                    String ref = toLvarRef(lvarNames, vramRef);
-                    puts("  get_vram %s reg_a", ref);
-                } else {
-                    throw unsupported(retval);
-                }
-
-            } else if (lvarNames.contains(retvalStr)) {
-                String ref = toLvarRef(lvarNames, retvalStr);
-                puts("  cp %s reg_a", ref);
-            } else {
-                throw unsupported(retval);
-            }
-            break;
-
-        default:
-            throw unsupported(retval);
-        }
+        genExpr(new Names(), lvarNames, retval);
     }
 
     private void genVmComment(String comment) {
