@@ -55,6 +55,18 @@ public class CodeGenerator {
 
     // --------------------------------
 
+    private void asmPrologue() {
+        puts("  push bp");
+        puts("  cp sp bp");
+    }
+
+    private void asmEpilogue() {
+        puts("  cp bp sp");
+        puts("  pop bp");
+    }
+
+    // --------------------------------
+
     private void genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         puts("  sub_sp 1");
 
@@ -361,8 +373,7 @@ public class CodeGenerator {
 
         puts("");
         puts("label %s", fnName);
-        puts("  push bp");
-        puts("  cp sp bp");
+        asmPrologue();
 
         puts("");
         puts("  # 関数の処理本体");
@@ -381,8 +392,7 @@ public class CodeGenerator {
         }
 
         puts("");
-        puts("  cp bp sp");
-        puts("  pop bp");
+        asmEpilogue();
         puts("  ret");
     }
 
