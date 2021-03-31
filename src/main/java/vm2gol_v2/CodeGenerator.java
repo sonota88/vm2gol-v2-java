@@ -41,12 +41,12 @@ public class CodeGenerator {
 
     private String toFnArgRef(Names fnArgNames, String fnArgName) {
         int i = fnArgNames.indexOf(fnArgName);
-        return String.format("[bp+%d]", i + 2);
+        return String.format("[bp:%d]", i + 2);
     }
 
     private String toLvarRef(Names lvarNames, String lvarName) {
         int i = lvarNames.indexOf(lvarName);
-        return String.format("[bp-%d]", i + 1);
+        return String.format("[bp:-%d]", i + 1);
     }
 
     private void puts(String line, Object ... params) {
