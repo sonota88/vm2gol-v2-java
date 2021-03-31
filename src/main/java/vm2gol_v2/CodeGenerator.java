@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import vm2gol_v2.util.Json;
 import vm2gol_v2.util.Regex;
 import vm2gol_v2.util.Utils;
-import vm2gol_v2.type.Alines;
 import vm2gol_v2.type.Names;
 import vm2gol_v2.type.NodeItem;
 import vm2gol_v2.type.NodeList;
@@ -28,9 +27,7 @@ public class CodeGenerator {
 
         NodeList tree = Json.parse(src);
 
-        Alines alines = codegen(tree);
-
-        printAlines(alines);
+        codegen(tree);
     }
 
     // --------------------------------
@@ -52,21 +49,21 @@ public class CodeGenerator {
         return String.format("[bp-%d]", i + 1);
     }
 
-    private Alines genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
-        Alines alines = new Alines();
-
-        alines.add("  sub_sp 1");
-
-        if (stmtRest.size() == 2) {
-            alines.addAll(genSet(fnArgNames, lvarNames, stmtRest));
-        }
-
-        return alines;
+    private void puts(String line, Object ... params) {
+        System.out.print(String.format(line + "\n", params));
     }
 
-    private Alines genExpr_push(Names fnArgNames, Names lvarNames, NodeItem val) {
-        Alines alines = new Alines();
-        
+    // --------------------------------
+
+    private void genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
+        puts("  sub_sp 1");
+
+        if (stmtRest.size() == 2) {
+            genSet(fnArgNames, lvarNames, stmtRest);
+        }
+    }
+
+    private void genExpr_push(Names fnArgNames, Names lvarNames, NodeItem val) {
         String pushArg;
         switch (val.type) {
         case INT:
@@ -84,116 +81,90 @@ public class CodeGenerator {
             }
             break;
         case LIST:
-            alines.addAll(
-                    genExpr(fnArgNames, lvarNames, val)
-                    );
+            genExpr(fnArgNames, lvarNames, val);
             pushArg = "reg_a";
             break;
         default:
             throw invalidType(val);
         }
 
-        alines.add("  push " + pushArg);
-        
-        return alines;
+        puts("  push " + pushArg);
     }
 
-    private Alines genExpr_add() {
-        Alines alines = new Alines();
+    private void genExpr_add() {
+        puts("  pop reg_b");
+        puts("  pop reg_a");
 
-        alines.add("  pop reg_b");
-        alines.add("  pop reg_a");
-
-        alines.add("  add_ab");
-
-        return alines;
+        puts("  add_ab");
     }
 
-    private Alines genExpr_mult() {
-        Alines alines = new Alines();
+    private void genExpr_mult() {
+        puts("  pop reg_b");
+        puts("  pop reg_a");
 
-        alines.add("  pop reg_b");
-        alines.add("  pop reg_a");
-
-        alines.add("  mult_ab");
-
-        return alines;
+        puts("  mult_ab");
     }
 
-    private Alines genExpr_eq() {
-        Alines alines = new Alines();
-
+    private void genExpr_eq() {
         int labelId = CodeGenerator.nextLabelId();
         String labelThen = String.format("then_%d", labelId);
         String labelEnd = String.format("end_eq_%d", labelId);
 
-        alines.add("  pop reg_b");
-        alines.add("  pop reg_a");
+        puts("  pop reg_b");
+        puts("  pop reg_a");
 
-        alines.add("  compare");
-        alines.add("  jump_eq %s", labelThen);
+        puts("  compare");
+        puts("  jump_eq %s", labelThen);
 
-        alines.add("  set_reg_a 0");
-        alines.add("  jump %s", labelEnd);
+        puts("  set_reg_a 0");
+        puts("  jump %s", labelEnd);
 
-        alines.add("label %s", labelThen);
-        alines.add("  set_reg_a 1");
+        puts("label %s", labelThen);
+        puts("  set_reg_a 1");
 
-        alines.add("label %s", labelEnd);
-
-        return alines;
+        puts("label %s", labelEnd);
     }
 
-    private Alines genExpr_neq() {
-        Alines alines = new Alines();
-
+    private void genExpr_neq() {
         int labelId = CodeGenerator.nextLabelId();
         String labelThen = String.format("then_%d", labelId);
         String labelEnd = String.format("end_neq_%d", labelId);
         
-        alines.add("  pop reg_b");
-        alines.add("  pop reg_a");
+        puts("  pop reg_b");
+        puts("  pop reg_a");
 
-        alines.add("  compare");
-        alines.add("  jump_eq %s", labelThen);
+        puts("  compare");
+        puts("  jump_eq %s", labelThen);
 
-        alines.add("  set_reg_a 1");
-        alines.add("  jump %s", labelEnd);
+        puts("  set_reg_a 1");
+        puts("  jump %s", labelEnd);
 
-        alines.add("label %s", labelThen);
-        alines.add("  set_reg_a 0");
+        puts("label %s", labelThen);
+        puts("  set_reg_a 0");
 
-        alines.add("label %s", labelEnd);
-
-        return alines;
+        puts("label %s", labelEnd);
     }
 
-    private Alines genExpr(Names fnArgNames, Names lvarNames, NodeItem expr) {
-        Alines alines = new Alines();
-
+    private void genExpr(Names fnArgNames, Names lvarNames, NodeItem expr) {
         NodeItem operator = expr.getItems().first();
         NodeList args = expr.getItems().rest();
 
         NodeItem termL = args.get(0);
         NodeItem termR = args.get(1);
 
-        alines.addAll(genExpr_push(fnArgNames, lvarNames, termL));
-        alines.addAll(genExpr_push(fnArgNames, lvarNames, termR));
+        genExpr_push(fnArgNames, lvarNames, termL);
+        genExpr_push(fnArgNames, lvarNames, termR);
 
-        if      (operator.strEq("+"  )) { alines.addAll(genExpr_add() ); }
-        else if (operator.strEq("*"  )) { alines.addAll(genExpr_mult()); }
-        else if (operator.strEq("eq" )) { alines.addAll(genExpr_eq()  ); }
-        else if (operator.strEq("neq")) { alines.addAll(genExpr_neq() ); }
+        if      (operator.strEq("+"  )) { genExpr_add() ; }
+        else if (operator.strEq("*"  )) { genExpr_mult(); }
+        else if (operator.strEq("eq" )) { genExpr_eq()  ; }
+        else if (operator.strEq("neq")) { genExpr_neq() ; }
         else {
             throw unsupported(operator);
         }
-
-        return alines;
     }
 
-    private Alines genCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
-        Alines alines = new Alines();
-
+    private void genCall_pushFnArg(Names fnArgNames, Names lvarNames, NodeItem fnArg) {
         String pushArg;
 
         switch (fnArg.type) {
@@ -216,34 +187,24 @@ public class CodeGenerator {
             throw unsupported(fnArg);
         }
 
-        alines.add("  push %s", pushArg);
-
-        return alines;
+        puts("  push %s", pushArg);
     }
 
-    private Alines genCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
-        Alines alines = new Alines();
-
+    private void genCall(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         String fnName = stmtRest.first().getStrVal();
         NodeList fnArgs = stmtRest.rest();
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
-            alines.addAll(
-                    genCall_pushFnArg(fnArgNames, lvarNames, fnArg)
-                    );
+            genCall_pushFnArg(fnArgNames, lvarNames, fnArg);
         }
 
-        alines.addAll(genVmComment("call  " + fnName));
-        alines.add("  call %s", fnName);
+        genVmComment("call  " + fnName);
+        puts("  call %s", fnName);
 
-        alines.add("  add_sp %d", fnArgs.size());
-        
-        return alines;
+        puts("  add_sp %d", fnArgs.size());
     }
 
-    private Alines genCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
-        Alines alines = new Alines();
-
+    private void genCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         String lvarName = stmtRest.first().getStrVal();
         NodeList fnTemp = stmtRest.get(1).getItems();
 
@@ -251,19 +212,15 @@ public class CodeGenerator {
         NodeList fnArgs = fnTemp.rest();
 
         for (NodeItem fnArg : fnArgs.reverse().getList()) {
-            alines.addAll(
-                    genCall_pushFnArg(fnArgNames, lvarNames, fnArg)
-                    );
+            genCall_pushFnArg(fnArgNames, lvarNames, fnArg);
         }
 
-        alines.addAll(genVmComment("call_set  " + fnName));
-        alines.add("  call %s", fnName);
-        alines.add("  add_sp %d", fnArgs.size());
+        genVmComment("call_set  " + fnName);
+        puts("  call %s", fnName);
+        puts("  add_sp %d", fnArgs.size());
 
         String ref = toLvarRef(lvarNames, lvarName);
-        alines.add("  cp reg_a %s", ref);
-
-        return alines;
+        puts("  cp reg_a %s", ref);
     }
 
     private Optional<Integer> matchVramAddr(String str) {
@@ -286,9 +243,7 @@ public class CodeGenerator {
         }
     }
 
-    private Alines genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
-        Alines alines = new Alines();
-
+    private void genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
         NodeItem dest = rest.get(0);
         NodeItem expr = rest.get(1);
 
@@ -306,14 +261,14 @@ public class CodeGenerator {
                 srcVal = toLvarRef(lvarNames, exprStr);
             } else if (matchVramAddr(exprStr).isPresent()) {
                 int vramAddr = matchVramAddr(exprStr).get();
-                alines.add("  get_vram %d reg_a", vramAddr);
+                puts("  get_vram %d reg_a", vramAddr);
                 srcVal = "reg_a";
             } else if (matchVramRef(exprStr).isPresent()) {
                 String vramRef = matchVramRef(exprStr).get();
 
                 if (lvarNames.contains(vramRef)) {
                     String ref = toLvarRef(lvarNames, vramRef);
-                    alines.add("  get_vram %s reg_a", ref);
+                    puts("  get_vram %s reg_a", ref);
                 } else {
                     throw unsupported(expr);
                 }
@@ -325,7 +280,7 @@ public class CodeGenerator {
             break;
 
         case LIST:
-            alines.addAll(genExpr(fnArgNames, lvarNames, expr));
+            genExpr(fnArgNames, lvarNames, expr);
             srcVal = "reg_a";
             break;
 
@@ -336,17 +291,17 @@ public class CodeGenerator {
         String destStr = dest.getStrVal();
         if (lvarNames.contains(destStr)) {
             String lvarRef = toLvarRef(lvarNames, destStr);
-            alines.add("  cp %s %s", srcVal, lvarRef);
+            puts("  cp %s %s", srcVal, lvarRef);
         } else if (matchVramAddr(destStr).isPresent()) {
             int vramAddr = matchVramAddr(destStr).get();
-            alines.add("  set_vram %d %s", vramAddr, srcVal);
+            puts("  set_vram %d %s", vramAddr, srcVal);
         } else if (matchVramRef(destStr).isPresent()) {
 
             String vramRef = matchVramRef(destStr).get();
 
             if (lvarNames.contains(vramRef)) {
                 String ref = toLvarRef(lvarNames, vramRef);
-                alines.add("  set_vram %s %s", ref, srcVal);
+                puts("  set_vram %s %s", ref, srcVal);
             } else {
                 throw unsupported(vramRef);
             }
@@ -354,18 +309,14 @@ public class CodeGenerator {
         } else {
             throw unsupported(destStr);
         }
-
-        return alines;
     }
 
-    private Alines genReturn(Names lvarNames, NodeList stmtRest) {
-        Alines alines = new Alines();
-
+    private void genReturn(Names lvarNames, NodeList stmtRest) {
         NodeItem retval = stmtRest.first();
 
         switch (retval.type) {
         case INT:
-            alines.add("  cp %d reg_a", retval.getIntVal());
+            puts("  cp %d reg_a", retval.getIntVal());
             break;
 
         case STR:
@@ -377,14 +328,14 @@ public class CodeGenerator {
                 
                 if (lvarNames.contains(vramRef)) {
                     String ref = toLvarRef(lvarNames, vramRef);
-                    alines.add("  get_vram %s reg_a", ref);
+                    puts("  get_vram %s reg_a", ref);
                 } else {
                     throw unsupported(retval);
                 }
 
             } else if (lvarNames.contains(retvalStr)) {
                 String ref = toLvarRef(lvarNames, retvalStr);
-                alines.add("  cp %s reg_a", ref);
+                puts("  cp %s reg_a", ref);
             } else {
                 throw unsupported(retval);
             }
@@ -393,21 +344,13 @@ public class CodeGenerator {
         default:
             throw unsupported(retval);
         }
-        
-        return alines;
     }
 
-    private Alines genVmComment(String comment) {
-        Alines alines = new Alines();
-
-        alines.add("  _cmt " + StringUtils.replace(comment, " ", "~"));
-        
-        return alines;
+    private void genVmComment(String comment) {
+        puts("  _cmt " + StringUtils.replace(comment, " ", "~"));
     }
 
-    private Alines genWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
-        Alines alines = new Alines();
-
+    private void genWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
         NodeItem condExpr = rest.first();
         NodeList body = rest.rest().first().getItems();
 
@@ -417,37 +360,29 @@ public class CodeGenerator {
         String labelEnd = String.format("end_while_%d", labelId);
         String labelTrue = String.format("true_%d", labelId);
 
-        alines.add("");
+        puts("");
 
-        alines.add("label %s", labelBegin);
+        puts("label %s", labelBegin);
 
         // 条件の評価
-        alines.addAll(
-                genExpr(fnArgNames, lvarNames, condExpr)
-                );
-        alines.add("  set_reg_b 1");
-        alines.add("  compare");
+        genExpr(fnArgNames, lvarNames, condExpr);
+        puts("  set_reg_b 1");
+        puts("  compare");
 
-        alines.add("  jump_eq %s", labelTrue);
+        puts("  jump_eq %s", labelTrue);
 
-        alines.add("  jump %s", labelEnd);
+        puts("  jump %s", labelEnd);
 
-        alines.add("label %s", labelTrue);
-        alines.addAll(
-                genStmts(fnArgNames, lvarNames, body)
-                );
+        puts("label %s", labelTrue);
+        genStmts(fnArgNames, lvarNames, body);
         
-        alines.add("  jump %s", labelBegin);
+        puts("  jump %s", labelBegin);
 
-        alines.add("label %s", labelEnd);
-        alines.add("");
-
-        return alines;
+        puts("label %s", labelEnd);
+        puts("");
     }
 
-    private Alines genCase(Names fnArgNames, Names lvarNames, NodeList whenBlocks) {
-        Alines alines = new Alines();
-
+    private void genCase(Names fnArgNames, Names lvarNames, NodeList whenBlocks) {
         int labelId = CodeGenerator.nextLabelId();
 
         int whenIdx = -1;
@@ -465,80 +400,68 @@ public class CodeGenerator {
 
             NodeItem condHead = cond.getItems().first();
 
-            alines.add(
+            puts(
                     "  # 条件 %d_%d: %s",
                     labelId, whenIdx, cond.inspect()
                     );
 
             if (condHead.strEq("eq")) {
-                alines.addAll(
-                        genExpr(fnArgNames, lvarNames, cond)
-                        );
-                alines.add("  set_reg_b 1");
+                genExpr(fnArgNames, lvarNames, cond);
+                puts("  set_reg_b 1");
 
-                alines.add("  compare");
-                alines.add("  jump_eq %s_%d", labelWhenHead, whenIdx);
-                alines.add("  jump %s_%d", labelEndWhenHead, whenIdx);
+                puts("  compare");
+                puts("  jump_eq %s_%d", labelWhenHead, whenIdx);
+                puts("  jump %s_%d", labelEndWhenHead, whenIdx);
 
-                alines.add("label %s_%d", labelWhenHead, whenIdx);
+                puts("label %s_%d", labelWhenHead, whenIdx);
 
-                alines.addAll(
-                    genStmts(fnArgNames, lvarNames, rest)
-                );
+                genStmts(fnArgNames, lvarNames, rest);
 
-                alines.add("label %s_%d", labelEndWhenHead, whenIdx);
+                puts("label %s_%d", labelEndWhenHead, whenIdx);
             } else {
                 throw unsupported(condHead);
             }
         }
 
-        alines.add("label %s", labelEnd);
-
-        return alines;
+        puts("label %s", labelEnd);
     }
 
-    private Alines genStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
+    private void genStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
         String stmtHead = stmt.first().getStrVal();
         NodeList stmtRest = stmt.rest();
 
         switch (stmtHead) {
-        case "set"     : return genSet(    fnArgNames, lvarNames, stmtRest);
-        case "call"    : return genCall(   fnArgNames, lvarNames, stmtRest);
-        case "call_set": return genCallSet(fnArgNames, lvarNames, stmtRest);
-        case "return"  : return genReturn(             lvarNames, stmtRest);
-        case "while"   : return genWhile(  fnArgNames, lvarNames, stmtRest);
-        case "case"    : return genCase(   fnArgNames, lvarNames, stmtRest);
-        case "_cmt"    : return genVmComment(stmtRest.get(0).getStrVal());
+        case "set"     : genSet(    fnArgNames, lvarNames, stmtRest); break;
+        case "call"    : genCall(   fnArgNames, lvarNames, stmtRest); break;
+        case "call_set": genCallSet(fnArgNames, lvarNames, stmtRest); break;
+        case "return"  : genReturn(             lvarNames, stmtRest); break;
+        case "while"   : genWhile(  fnArgNames, lvarNames, stmtRest); break;
+        case "case"    : genCase(   fnArgNames, lvarNames, stmtRest); break;
+        case "_cmt"    : genVmComment(stmtRest.get(0).getStrVal());   break;
         default:
             throw unsupported(stmtHead);
         }
     }
 
-    private Alines genStmts(Names fnArgNames, Names lvarNames, NodeList stmts) {
-        Alines alines = new Alines();
-
+    private void genStmts(Names fnArgNames, Names lvarNames, NodeList stmts) {
         for (NodeItem _stmt : stmts.getList()) {
             NodeList stmt = _stmt.getItems();
-            alines.addAll(genStmt(fnArgNames, lvarNames, stmt));
+            genStmt(fnArgNames, lvarNames, stmt);
         }
-
-        return alines;
     }
 
-    private Alines genFuncDef(NodeList rest) {
-        Alines alines = new Alines();
-
+    private void genFuncDef(NodeList rest) {
         String fnName = rest.get(0).getStrVal();
         Names fnArgNames = Names.fromNodeList(rest.get(1).getItems());
         NodeList body = rest.get(2).getItems();
 
-        alines.add("");
-        alines.add("label %s", fnName);
-        alines.add("  push bp");
-        alines.add("  cp sp bp");
+        puts("");
+        puts("label %s", fnName);
+        puts("  push bp");
+        puts("  cp sp bp");
 
-        alines.add("");
-        alines.add("  # 関数の処理本体");
+        puts("");
+        puts("  # 関数の処理本体");
 
         Names lvarNames = new Names();
 
@@ -547,66 +470,40 @@ public class CodeGenerator {
             if (_stmt.first().strEq("var")) {
                 NodeList stmtRest = _stmt.rest(); 
                 lvarNames.add(stmtRest.first().getStrVal());
-                alines.addAll(
-                        genVar(fnArgNames, lvarNames, stmtRest)
-                        );
+                genVar(fnArgNames, lvarNames, stmtRest);
             } else {
-                alines.addAll(
-                        genStmt(fnArgNames, lvarNames, _stmt)
-                        );
+                genStmt(fnArgNames, lvarNames, _stmt);
             }
         }
 
-        alines.add("");
-        alines.add("  cp bp sp");
-        alines.add("  pop bp");
-        alines.add("  ret");
-
-        return alines;
+        puts("");
+        puts("  cp bp sp");
+        puts("  pop bp");
+        puts("  ret");
     }
 
-    private Alines genTopStmts(NodeList rest) {
-        Alines alines = new Alines();
-
+    private void genTopStmts(NodeList rest) {
         for (NodeItem stmt : rest.getList()) {
             NodeItem stmtHead = stmt.getItems().first();
             NodeList stmtRest = stmt.getItems().rest();
 
             if (stmtHead.strEq("func")) {
-                alines.addAll(
-                        genFuncDef(stmtRest)
-                        );
+                genFuncDef(stmtRest);
             } else if (stmtHead.strEq("_cmt")) {
-                alines.addAll(
-                        genVmComment(stmtRest.first().getStrVal())
-                        );
+                genVmComment(stmtRest.first().getStrVal());
             } else {
                 throw unsupported(stmtHead);
             }
         }
-
-        return alines;
     }
 
-    Alines codegen(NodeList nl) {
-        Alines alines = new Alines();
-
-        alines.add("  call main");
-        alines.add("  exit");
+    void codegen(NodeList nl) {
+        puts("  call main");
+        puts("  exit");
 
         // NodeItem head = nl.first();
         NodeList rest = nl.rest();
-        alines.addAll(
-                genTopStmts(rest)
-                );
-
-        return alines;
-    }
-
-    private void printAlines(Alines alines) {
-        for (String line : alines.getLines()) {
-            System.out.print(line + Utils.LF);
-        }
+        genTopStmts(rest);
     }
 
 }
