@@ -64,7 +64,7 @@ class Tokenizer {
                 tokens.add(new Token(Kind.SYM, s));
                 pos += s.length();
 
-            } else if (re.match("^([a-z_][a-z0-9_\\[\\]]*)", rest)) {
+            } else if (re.match("^([a-z_][a-z0-9_]*)", rest)) {
                 String s = re.group(1);
                 tokens.add(new Token(Kind.IDENT, s));
                 pos += s.length();

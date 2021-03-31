@@ -164,18 +164,6 @@ public class CodeGenerator {
                 String fnArgName = expr.getStrVal();
                 String cpSrc = toFnArgRef(fnArgNames, fnArgName);
                 puts("  cp %s reg_a", cpSrc);
-            } else if (matchVramAddr(expr.getStrVal()).isPresent()) {
-                int vramAddr = matchVramAddr(expr.getStrVal()).get();
-                puts("  get_vram %d reg_a", vramAddr);
-            } else if (matchVramRef(expr.getStrVal()).isPresent()) {
-                String vramRef = matchVramRef(expr.getStrVal()).get();
-
-                if (lvarNames.contains(vramRef)) {
-                    String ref = toLvarRef(lvarNames, vramRef);
-                    puts("  get_vram %s reg_a", ref);
-                } else {
-                    throw unsupported(expr);
-                }
             } else {
                 throw unsupported(expr);
             }
@@ -213,26 +201,6 @@ public class CodeGenerator {
         puts("  cp reg_a %s", ref);
     }
 
-    private Optional<Integer> matchVramAddr(String str) {
-        Regex re = new Regex();
-
-        if (re.match("^vram\\[(\\d+)\\]$", str)) {
-            return Optional.of(Integer.valueOf(re.group(1)));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    private Optional<String> matchVramRef(String str) {
-        Regex re = new Regex();
-
-        if (re.match("^vram\\[([a-z][a-z0-9_]*)\\]$", str)) {
-            return Optional.of(re.group(1));
-        } else {
-            return Optional.empty();
-        }
-    }
-
     private void genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
         NodeItem dest = rest.get(0);
         NodeItem expr = rest.get(1);
@@ -244,20 +212,6 @@ public class CodeGenerator {
         if (lvarNames.contains(destStr)) {
             String lvarRef = toLvarRef(lvarNames, destStr);
             puts("  cp %s %s", srcVal, lvarRef);
-        } else if (matchVramAddr(destStr).isPresent()) {
-            int vramAddr = matchVramAddr(destStr).get();
-            puts("  set_vram %d %s", vramAddr, srcVal);
-        } else if (matchVramRef(destStr).isPresent()) {
-
-            String vramRef = matchVramRef(destStr).get();
-
-            if (lvarNames.contains(vramRef)) {
-                String ref = toLvarRef(lvarNames, vramRef);
-                puts("  set_vram %s %s", ref, srcVal);
-            } else {
-                throw unsupported(vramRef);
-            }
-
         } else {
             throw unsupported(destStr);
         }
