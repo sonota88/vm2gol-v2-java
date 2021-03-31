@@ -51,7 +51,8 @@ label vram_set
   call to_vi
   add_sp 4
   cp reg_a [bp:-1]
-  set_vram [bp:-1] [bp:5]
+  cp [bp:5] reg_a
+  set_vram [bp:-1] reg_a
 
   cp bp sp
   pop bp
@@ -75,7 +76,8 @@ label vram_set_buf
   call to_vi
   add_sp 4
   cp reg_a [bp:-1]
-  set_vram [bp:-1] [bp:5]
+  cp [bp:5] reg_a
+  set_vram [bp:-1] reg_a
 
   cp bp sp
   pop bp
@@ -160,7 +162,8 @@ label end_eq_3
   jump end_when_1_1
 label when_1_1
   _cmt 上限を超えた場合
-  cp 0 [bp:-1]
+  cp 0 reg_a
+  cp reg_a [bp:-1]
 label end_when_1_1
   # 条件 1_2: ["eq", 1, 1]
   cp 1 reg_a
@@ -182,7 +185,8 @@ label end_eq_4
   jump end_when_1_2
 label when_1_2
   _cmt 補正が不要な場合
-  cp [bp:3] [bp:-1]
+  cp [bp:3] reg_a
+  cp reg_a [bp:-1]
 label end_when_1_2
 label end_case_1
   cp [bp:-1] reg_a
@@ -197,7 +201,8 @@ label calc_next_gen
 
   # 関数の処理本体
   sub_sp 1
-  cp 0 [bp:-1]
+  cp 0 reg_a
+  cp reg_a [bp:-1]
   # 条件 5_0: ["eq", "current_val", 0]
   cp [bp:2] reg_a
   push reg_a
@@ -236,7 +241,8 @@ label end_eq_8
   jump_eq when_7_0
   jump end_when_7_0
 label when_7_0
-  cp 1 [bp:-1]
+  cp 1 reg_a
+  cp reg_a [bp:-1]
 label end_when_7_0
 label end_case_7
 label end_when_5_0
@@ -278,7 +284,8 @@ label end_eq_11
   jump_eq when_10_0
   jump end_when_10_0
 label when_10_0
-  cp 1 [bp:-1]
+  cp 1 reg_a
+  cp reg_a [bp:-1]
 label end_when_10_0
   # 条件 10_1: ["eq", "count", 3]
   cp [bp:3] reg_a
@@ -299,7 +306,8 @@ label end_eq_12
   jump_eq when_10_1
   jump end_when_10_1
 label when_10_1
-  cp 1 [bp:-1]
+  cp 1 reg_a
+  cp reg_a [bp:-1]
 label end_when_10_1
 label end_case_10
 label end_when_5_1
@@ -316,7 +324,8 @@ label count_alive
 
   # 関数の処理本体
   sub_sp 1
-  cp 0 [bp:-1]
+  cp 0 reg_a
+  cp reg_a [bp:-1]
   sub_sp 1
   cp [bp:4] reg_a
   push reg_a
@@ -560,9 +569,11 @@ label make_next_gen
 
   # 関数の処理本体
   sub_sp 1
-  cp 0 [bp:-1]
+  cp 0 reg_a
+  cp reg_a [bp:-1]
   sub_sp 1
-  cp 0 [bp:-2]
+  cp 0 reg_a
+  cp reg_a [bp:-2]
   sub_sp 1
   sub_sp 1
   sub_sp 1
@@ -586,7 +597,8 @@ label end_neq_14
   jump_eq true_13
   jump end_while_13
 label true_13
-  cp 0 [bp:-1]
+  cp 0 reg_a
+  cp reg_a [bp:-1]
 
 label while_15
   cp [bp:-1] reg_a
@@ -685,7 +697,8 @@ label replace_with_buf
 
   # 関数の処理本体
   sub_sp 1
-  cp 0 [bp:-1]
+  cp 0 reg_a
+  cp reg_a [bp:-1]
   sub_sp 1
   sub_sp 1
 
@@ -718,7 +731,8 @@ label true_17
   cp reg_a [bp:-2]
   get_vram [bp:-2] reg_a
   cp reg_a [bp:-3]
-  set_vram [bp:-1] [bp:-3]
+  cp [bp:-3] reg_a
+  set_vram [bp:-1] reg_a
   cp [bp:-1] reg_a
   push reg_a
   cp 1 reg_a
@@ -741,9 +755,11 @@ label main
 
   # 関数の処理本体
   sub_sp 1
-  cp 5 [bp:-1]
+  cp 5 reg_a
+  cp reg_a [bp:-1]
   sub_sp 1
-  cp 5 [bp:-2]
+  cp 5 reg_a
+  cp reg_a [bp:-2]
   cp 1 reg_a
   push reg_a
   cp 0 reg_a
@@ -800,9 +816,11 @@ label main
   call vram_set
   add_sp 4
   sub_sp 1
-  cp 0 [bp:-3]
+  cp 0 reg_a
+  cp reg_a [bp:-3]
   sub_sp 1
-  cp 1 [bp:-4]
+  cp 1 reg_a
+  cp reg_a [bp:-4]
 
 label while_19
   cp [bp:-4] reg_a

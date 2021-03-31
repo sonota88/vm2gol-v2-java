@@ -235,46 +235,8 @@ public class CodeGenerator {
         NodeItem dest = rest.get(0);
         NodeItem expr = rest.get(1);
 
-        String srcVal;
-        switch (expr.type) {
-        case INT:
-            srcVal = String.valueOf(expr.getIntVal());
-            break;
-
-        case STR:
-            String exprStr = expr.getStrVal();
-            if (fnArgNames.contains(exprStr)) {
-                srcVal = toFnArgRef(fnArgNames, exprStr);
-            } else if (lvarNames.contains(exprStr)) {
-                srcVal = toLvarRef(lvarNames, exprStr);
-            } else if (matchVramAddr(exprStr).isPresent()) {
-                int vramAddr = matchVramAddr(exprStr).get();
-                puts("  get_vram %d reg_a", vramAddr);
-                srcVal = "reg_a";
-            } else if (matchVramRef(exprStr).isPresent()) {
-                String vramRef = matchVramRef(exprStr).get();
-
-                if (lvarNames.contains(vramRef)) {
-                    String ref = toLvarRef(lvarNames, vramRef);
-                    puts("  get_vram %s reg_a", ref);
-                } else {
-                    throw unsupported(expr);
-                }
-                srcVal = "reg_a";
-
-            } else {
-                throw unsupported(expr);
-            }
-            break;
-
-        case LIST:
-            _genExpr_binary(fnArgNames, lvarNames, expr);
-            srcVal = "reg_a";
-            break;
-
-        default:
-            throw invalidType(expr);
-        }
+        genExpr(fnArgNames, lvarNames, expr);
+        String srcVal = "reg_a";
 
         String destStr = dest.getStrVal();
         if (lvarNames.contains(destStr)) {
