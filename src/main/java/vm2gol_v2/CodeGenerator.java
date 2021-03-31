@@ -318,14 +318,11 @@ public class CodeGenerator {
             NodeItem cond = whenBlock.first();
             NodeList rest = whenBlock.rest();
 
-            NodeItem condHead = cond.getItems().first();
-
             puts(
                     "  # 条件 %d_%d: %s",
                     labelId, whenIdx, cond.inspect()
                     );
 
-            if (condHead.strEq("eq")) {
                 genExpr(fnArgNames, lvarNames, cond);
                 puts("  set_reg_b 1");
 
@@ -338,9 +335,6 @@ public class CodeGenerator {
                 genStmts(fnArgNames, lvarNames, rest);
 
                 puts("label %s_%d", labelEndWhenHead, whenIdx);
-            } else {
-                throw unsupported(condHead);
-            }
         }
 
         puts("label %s", labelEnd);
