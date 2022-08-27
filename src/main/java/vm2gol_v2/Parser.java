@@ -274,54 +274,6 @@ public class Parser {
         return expr;
     }
 
-    private NodeItem parseExprRight(NodeItem exprL) {
-        Token t = peek();
-
-        if (t.is(Token.Kind.SYM, ";") || t.is(Token.Kind.SYM, ")")) {
-            return exprL;
-        }
-
-        NodeList expr;
-
-        if (t.is(Token.Kind.SYM, "+")) {
-            consumeSym("+");
-            NodeItem exprR = parseExpr();
-            expr = nodelist()
-                    .add("+")
-                    .add(exprL)
-                    .add(exprR)
-                    ;
-        } else if (t.is(Token.Kind.SYM, "*")) {
-            consumeSym("*");
-            NodeItem exprR = parseExpr();
-            expr = nodelist()
-                    .add("*")
-                    .add(exprL)
-                    .add(exprR)
-                    ;
-        } else if (t.is(Token.Kind.SYM, "==")) {
-            consumeSym("==");
-            NodeItem exprR = parseExpr();
-            expr = nodelist()
-                    .add("eq")
-                    .add(exprL)
-                    .add(exprR)
-                    ;
-        } else if (t.is(Token.Kind.SYM, "!=")) {
-            consumeSym("!=");
-            NodeItem exprR = parseExpr();
-            expr = nodelist()
-                    .add("neq")
-                    .add(exprL)
-                    .add(exprR)
-                    ;
-        } else {
-            throw unsupported("Unsupported operator");
-        }
-
-        return NodeItem.of(expr);
-    }
-
     private boolean isBinOp(Token t) {
         return Arrays.asList("+", "*", "==", "!=").contains(t.getStr());
     }
