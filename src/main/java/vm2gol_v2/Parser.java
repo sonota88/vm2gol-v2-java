@@ -245,6 +245,35 @@ public class Parser {
         }
     }
 
+    private NodeItem parseExprFactor() {
+        Token t = peek();
+
+        NodeItem expr;
+
+        switch (t.kind) {
+        case SYM:
+            consumeSym("(");
+            expr = parseExpr();
+            consumeSym(")");
+            break;
+
+        case INT:
+            pos++;
+            expr = NodeItem.of(t.getIntVal());
+            break;
+
+        case IDENT:
+            pos++;
+            expr = NodeItem.of(t.getStr());
+            break;
+
+        default:
+            throw invalidKind(t);
+        }
+
+        return expr;
+    }
+
     private NodeItem parseExprRight(NodeItem exprL) {
         Token t = peek();
 
