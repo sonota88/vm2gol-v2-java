@@ -322,9 +322,35 @@ public class Parser {
         return NodeItem.of(expr);
     }
 
+    private boolean isBinOp(Token t) {
+        return Arrays.asList("+", "*", "==", "!=").contains(t.getStr());
+    }
+
     private NodeItem parseExpr() {
-        NodeItem exprL = parseExprFactor();
-        return parseExprRight(exprL);
+        NodeItem expr = parseExprFactor();
+
+        while (isBinOp(peek(0))) {
+            String op = peek(0).getStr();
+            pos++;
+
+            String _op = op;
+            if (StringUtils.equals(_op, "==")) {
+                _op = "eq";
+            } else if (StringUtils.equals(_op, "!=")) {
+                _op = "neq";
+            }
+
+            NodeItem rhs = parseExprFactor();
+
+            expr = NodeItem.of(
+                nodelist()
+                    .add(_op)
+                    .add(expr)
+                    .add(rhs)
+            );
+        }
+
+        return expr;
     }
 
     private NodeList parseSet() {
