@@ -56,7 +56,7 @@ public class Parser {
     }
 
     // --------------------------------
-    
+
     private boolean isEnd() {
         return this.tokens.size() <= this.pos;
     }
@@ -130,7 +130,7 @@ public class Parser {
             throw invalidKind(t);
         }
     }
-    
+
     private NodeItem parseArgs_first() {
         if (peek().is(Token.Kind.SYM, ")")) {
             return null;
@@ -328,7 +328,7 @@ public class Parser {
         Token t = peek();
         pos++;
         String varName = t.getStr();
-        
+
         consumeSym("=");
 
         NodeItem expr = parseExpr();
@@ -460,7 +460,7 @@ public class Parser {
 
             whenClauses.add(whenClause);
         }
-        
+
         consumeSym("}");
 
         return nodelist()
@@ -476,7 +476,7 @@ public class Parser {
         Token t = peek();
         pos++;
         String comment = t.getStr();
-        
+
         consumeSym(")");
         consumeSym(";");
 
@@ -485,7 +485,7 @@ public class Parser {
                 .add(comment)
                 ;
     }
-    
+
     private NodeList parseStmt() {
         Token t = peek();
 
