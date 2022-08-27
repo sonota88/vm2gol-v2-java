@@ -296,17 +296,15 @@ public class Parser {
     private NodeItem parseExpr() {
         Token tl = peek();
 
-        if (tl.is(Token.Kind.SYM, "(")) {
-            consumeSym("(");
-            NodeItem exprL = parseExpr();
-            consumeSym(")");
-
-            return parseExprRight(exprL);
-        }
-
         NodeItem exprL;
 
         switch (tl.kind) {
+        case SYM:
+            consumeSym("(");
+            exprL = parseExpr();
+            consumeSym(")");
+            return parseExprRight(exprL);
+
         case INT:
             pos++;
             exprL = NodeItem.of(tl.getIntVal());
