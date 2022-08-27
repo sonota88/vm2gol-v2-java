@@ -323,31 +323,7 @@ public class Parser {
     }
 
     private NodeItem parseExpr() {
-        Token tl = peek();
-
-        NodeItem exprL;
-
-        switch (tl.kind) {
-        case SYM:
-            consumeSym("(");
-            exprL = parseExpr();
-            consumeSym(")");
-            break;
-
-        case INT:
-            pos++;
-            exprL = NodeItem.of(tl.getIntVal());
-            break;
-
-        case IDENT:
-            pos++;
-            exprL = NodeItem.of(tl.getStr());
-            break;
-
-        default:
-            throw invalidKind(tl);
-        }
-
+        NodeItem exprL = parseExprFactor();
         return parseExprRight(exprL);
     }
 
