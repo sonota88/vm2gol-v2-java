@@ -303,21 +303,23 @@ public class Parser {
             consumeSym("(");
             exprL = parseExpr();
             consumeSym(")");
-            return parseExprRight(exprL);
+            break;
 
         case INT:
             pos++;
             exprL = NodeItem.of(tl.getIntVal());
-            return parseExprRight(exprL);
+            break;
 
         case IDENT:
             pos++;
             exprL = NodeItem.of(tl.getStr());
-            return parseExprRight(exprL);
+            break;
 
         default:
             throw invalidKind(tl);
         }
+
+        return parseExprRight(exprL);
     }
 
     private NodeList parseSet() {
