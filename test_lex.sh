@@ -32,7 +32,7 @@ test_nn() {
     return
   fi
 
-  ruby test/diff.rb text $exp_tokens_file $temp_tokens_file
+  ruby test_common/diff.rb text $exp_tokens_file $temp_tokens_file
   if [ $? -ne 0 ]; then
     # meld $exp_tokens_file $temp_tokens_file &
 

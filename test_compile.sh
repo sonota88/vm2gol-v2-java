@@ -44,7 +44,7 @@ test_nn() {
     return
   fi
 
-  ruby test/diff.rb asm $exp_vga_file $temp_vga_file
+  ruby test_common/diff.rb asm $exp_vga_file $temp_vga_file
   if [ $? -ne 0 ]; then
     # meld $exp_vga_file $temp_vga_file &
 
