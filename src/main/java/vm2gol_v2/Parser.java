@@ -15,7 +15,6 @@ import vm2gol_v2.type.Token;
 import static vm2gol_v2.util.Utils.notYetImpl;
 import static vm2gol_v2.util.Utils.invalidKind;
 import static vm2gol_v2.util.Utils.unexpected;
-import static vm2gol_v2.util.Utils.unsupported;
 
 public class Parser {
 

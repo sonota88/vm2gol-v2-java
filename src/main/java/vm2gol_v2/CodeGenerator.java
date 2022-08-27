@@ -3,7 +3,6 @@ package vm2gol_v2;
 import org.apache.commons.lang3.StringUtils;
 
 import vm2gol_v2.util.Json;
-import vm2gol_v2.util.Regex;
 import vm2gol_v2.util.Utils;
 import vm2gol_v2.type.Names;
 import vm2gol_v2.type.NodeItem;
@@ -11,10 +10,6 @@ import vm2gol_v2.type.NodeList;
 
 import static vm2gol_v2.util.Utils.invalidType;
 import static vm2gol_v2.util.Utils.unsupported;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class CodeGenerator {
 
