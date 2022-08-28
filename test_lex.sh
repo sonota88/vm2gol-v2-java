@@ -9,14 +9,14 @@ print_project_dir() {
 }
 
 export PROJECT_DIR="$(print_project_dir)"
-export TEST_DIR="${PROJECT_DIR}/test"
+export TEST_DIR="${PROJECT_DIR}/test_common"
 export TEMP_DIR="${PROJECT_DIR}/z_tmp"
 
 ERRS=""
 
 test_nn() {
   local nn="$1"; shift
-  nn="${nn}0"
+  nn="${nn}"
 
   local temp_tokens_file="${TEMP_DIR}/test.tokens.txt"
 

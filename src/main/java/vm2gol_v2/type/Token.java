@@ -4,6 +4,8 @@ import vm2gol_v2.util.Utils;
 
 import static vm2gol_v2.util.Utils.invalidKind;
 
+import vm2gol_v2.util.Json;
+
 public class Token {
 
     public enum Kind {
@@ -70,15 +72,17 @@ public class Token {
     }
 
     public static Token fromLine(String line) {
-        int i = line.indexOf(":");
-        String kindStr = line.substring(0, i);
-        String val = line.substring(i + 1);
-
-        return new Token(Kind.of(kindStr), val);
+        NodeList list = Json.parse(line);
+        return new Token(
+                // TODO lineNo
+                Kind.of(list.getStr(1)),
+                list.getStr(2)
+        );
     }
 
     public String toLine() {
-        return this.kind.getStr() + ":" + getStr();
+        int lineNo = 1; // TODO
+        return String.format("[%d, \"%s\", \"%s\"]", lineNo, this.kind.getStr(), getStr());
     }
 
 }
