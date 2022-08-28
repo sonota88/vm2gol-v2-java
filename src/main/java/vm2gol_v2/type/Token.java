@@ -34,11 +34,13 @@ public class Token {
             throw new IllegalArgumentException(str);
         }
     }
-    
+
+    private int lineNo;
     public Kind kind;
     private String str;
 
-    public Token(Kind kind, String val) {
+    public Token(int lineNo, Kind kind, String val) {
+        this.lineNo = lineNo;
         this.kind = kind;
         this.str = val;
     }
@@ -74,15 +76,19 @@ public class Token {
     public static Token fromLine(String line) {
         NodeList list = Json.parse(line);
         return new Token(
-                // TODO lineNo
+                list.getInt(0),
                 Kind.of(list.getStr(1)),
                 list.getStr(2)
         );
     }
 
     public String toLine() {
-        int lineNo = 1; // TODO
-        return String.format("[%d, \"%s\", \"%s\"]", lineNo, this.kind.getStr(), getStr());
+        return String.format(
+                "[%d, \"%s\", \"%s\"]",
+                this.lineNo,
+                this.kind.getStr(),
+                getStr()
+                );
     }
 
 }

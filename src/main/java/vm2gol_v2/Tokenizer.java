@@ -30,15 +30,20 @@ class Tokenizer {
     private List<Token> tokenize(String src) {
         List<Token> tokens = new ArrayList<>();
         int pos = 0;
+        int lineNo = 1;
 
         Regex re = new Regex();
 
         while (pos < src.length()) {
             String rest = src.substring(pos);
 
-            if (re.match("^([ \n]+)", rest)) {
+            if (re.match("^( +)", rest)) {
                 String s = re.group(1);
                 pos += s.length();
+
+            } else if (re.match("^\n", rest)) {
+                pos += 1;
+                lineNo++;
 
             } else if (re.match("^(//.*)", rest)) {
                 String s = re.group(1);
@@ -46,27 +51,27 @@ class Tokenizer {
 
             } else if (re.match("^\"(.*)\"", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Kind.STR, s));
+                tokens.add(new Token(lineNo, Kind.STR, s));
                 pos += s.length() + 2;
 
             } else if (re.match("^(func|set|var|call_set|call|return|case|while|_cmt)[^a-z_]", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Kind.KW, s));
+                tokens.add(new Token(lineNo, Kind.KW, s));
                 pos += s.length();
 
             } else if (re.match("^(-?[0-9]+)", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Kind.INT, s));
+                tokens.add(new Token(lineNo, Kind.INT, s));
                 pos += s.length();
 
             } else if (re.match("^(==|!=|[(){}=;+*,])", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Kind.SYM, s));
+                tokens.add(new Token(lineNo, Kind.SYM, s));
                 pos += s.length();
 
             } else if (re.match("^([a-z_][a-z0-9_]*)", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(Kind.IDENT, s));
+                tokens.add(new Token(lineNo, Kind.IDENT, s));
                 pos += s.length();
 
             } else {

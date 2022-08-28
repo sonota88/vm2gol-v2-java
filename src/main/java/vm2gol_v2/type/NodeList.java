@@ -78,6 +78,10 @@ public class NodeList {
         return Utils.toString(this);
     }
 
+    public int getInt(int i) {
+        return this.get(i).getIntVal();
+    }
+
     public String getStr(int i) {
         return this.get(i).getStrVal();
     }
