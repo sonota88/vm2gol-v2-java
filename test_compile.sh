@@ -9,7 +9,7 @@ print_project_dir() {
 }
 
 export PROJECT_DIR="$(print_project_dir)"
-export TEST_DIR="${PROJECT_DIR}/test"
+export TEST_DIR="${PROJECT_DIR}/test_common"
 export TEMP_DIR="${PROJECT_DIR}/z_tmp"
 
 ERRS=""
@@ -64,7 +64,7 @@ if [ $# -eq 1 ]; then
   n="$1"
   test_nn $(printf "%02d" $n)
 else
-  ns="$(seq 1 26)"
+  ns="$(seq 1 27)"
   for n in $ns; do
     test_nn $(printf "%02d" $n)
   done

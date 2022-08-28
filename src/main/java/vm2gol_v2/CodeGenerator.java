@@ -285,6 +285,8 @@ public class CodeGenerator {
 
             genStmts(fnArgNames, lvarNames, rest);
 
+            puts("  jump %s", labelEnd);
+
             puts("label %s_%d", labelEndWhenHead, whenIdx);
         }
 
