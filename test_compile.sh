@@ -55,6 +55,8 @@ test_nn() {
 
 # --------------------------------
 
+echo "== compile =="
+
 mkdir -p z_tmp
 
 mvn --quiet -DskipTests=true package 1>&2
