@@ -57,11 +57,6 @@ test_nn() {
 
 echo "== compile =="
 
-mkdir -p z_tmp
-
-mvn --quiet -DskipTests=true package 1>&2
-export DO_BUILD=0
-
 if [ $# -eq 1 ]; then
   n="$1"
   test_nn $(printf "%02d" $n)

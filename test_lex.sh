@@ -45,11 +45,6 @@ test_nn() {
 
 echo "== lex =="
 
-mkdir -p z_tmp
-
-mvn --quiet -DskipTests=true package 1>&2
-export DO_BUILD=0
-
 ns=
 
 if [ $# -eq 1 ]; then

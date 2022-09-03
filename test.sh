@@ -2,6 +2,22 @@
 
 set -o nounset
 
+# --------------------------------
+
+setup() {
+  mkdir -p ./z_tmp
+}
+
+build() {
+  printf "building... " >&2
+  mvn --quiet -DskipTests=true package 1>&2
+  printf "done\n" >&2
+
+  export DO_BUILD=0
+}
+
+# --------------------------------
+
 test_lex() {
   ./test_lex.sh "$@"
 }
@@ -16,6 +32,10 @@ test_all() {
 }
 
 main() {
+  setup
+
+  build
+
   local cmd=
   if [ $# -ge 1 ]; then
     cmd="$1"; shift
