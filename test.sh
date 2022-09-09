@@ -15,6 +15,7 @@ readonly TEST_COMMON_DIR="${PROJECT_DIR}/test_common"
 readonly TEMP_DIR="${PROJECT_DIR}/z_tmp"
 
 MAX_ID_LEX=3
+MAX_ID_COMPILE=27
 
 ERRS=""
 
@@ -30,6 +31,18 @@ run_lex() {
   local infile="$1"; shift
 
   cat $infile | runner_cmd tokenize
+}
+
+run_parse() {
+  local infile="$1"; shift
+
+  cat $infile | runner_cmd parse
+}
+
+run_codegen() {
+  local infile="$1"; shift
+
+  cat $infile | runner_cmd codegen
 }
 
 # --------------------------------
@@ -104,9 +117,81 @@ test_lex() {
 
 # --------------------------------
 
-test_compile() {
-  ./test_compile.sh "$@"
+test_compile_do_skip() {
+  local nn="$1"; shift
+
+  # for skip_nn in 26 27 28; do
+  #   if [ "$nn" = "$skip_nn" ]; then
+  #     return 0
+  #   fi
+  # done
+
+  return 1
 }
+
+test_compile_nn() {
+  local nn="$1"; shift
+
+  echo "case ${nn}"
+
+  if (test_compile_do_skip "$nn"); then
+    echo "  ... skip" >&2
+    return
+  fi
+
+  local temp_tokens_file="${TEMP_DIR}/test.tokens.txt"
+  local temp_vgt_file="${TEMP_DIR}/test.vgt.json"
+  local temp_vga_file="${TEMP_DIR}/test.vga.txt"
+  local local_errs=""
+  local exp_file="${TEST_COMMON_DIR}/compile/exp_${nn}.vga.txt"
+
+  echo "  lex" >&2
+  run_lex ${TEST_COMMON_DIR}/compile/${nn}.vg.txt \
+    > $temp_tokens_file
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_lex"
+    local_errs="${local_errs},${nn}_lex"
+    return
+  fi
+
+  echo "  parse" >&2
+  run_parse $temp_tokens_file \
+    > $temp_vgt_file
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_parse"
+    local_errs="${local_errs},${nn}_parse"
+    return
+  fi
+
+  echo "  codegen" >&2
+  run_codegen $temp_vgt_file \
+    > $temp_vga_file
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_codegen"
+    local_errs="${local_errs},${nn}_codegen"
+    return
+  fi
+
+  if [ "$local_errs" = "" ]; then
+    ruby test_common/diff.rb asm $exp_file $temp_vga_file
+    if [ $? -ne 0 ]; then
+      # meld $exp_file $temp_vga_file &
+
+      ERRS="${ERRS},compile_${nn}_diff"
+      return
+    fi
+  fi
+}
+
+test_compile() {
+  local ids="$(get_ids $MAX_ID_COMPILE "$@")"
+
+  for id in $ids; do
+    test_compile_nn $(printf "%02d" $id)
+  done
+}
+
+# --------------------------------
 
 test_all() {
   echo "==== lex ===="
@@ -116,7 +201,12 @@ test_all() {
     return
   fi
 
-  ./test_compile.sh "$@"
+  echo "==== compile ===="
+  test_compile
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_compile"
+    return
+  fi
 }
 
 main() {
@@ -137,6 +227,7 @@ main() {
       postproc "lex"
   ;; compile | c*) #task: Run compile tests
       test_compile "$@"
+      postproc "compile"
   ;; all | a*)    #task: Run all tests
       test_all "$@"
   ;; * )
