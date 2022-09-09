@@ -2,6 +2,36 @@
 
 set -o nounset
 
+print_project_dir() {
+  (
+    cd "$(dirname "$0")"
+    pwd
+  )
+}
+
+readonly PROJECT_DIR="$(print_project_dir)"
+readonly TEST_DIR="${PROJECT_DIR}/test"
+readonly TEST_COMMON_DIR="${PROJECT_DIR}/test_common"
+readonly TEMP_DIR="${PROJECT_DIR}/z_tmp"
+
+MAX_ID_LEX=3
+
+ERRS=""
+
+# RUNNER_CMD=
+
+runner_cmd() {
+  local artifact=vm2gol_v2
+  local jarfile="${artifact}-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
+  java -jar $(print_project_dir)/target/${jarfile} "$@"
+}
+
+run_lex() {
+  local infile="$1"; shift
+
+  cat $infile | runner_cmd tokenize
+}
+
 # --------------------------------
 
 setup() {
@@ -16,18 +46,76 @@ build() {
   export DO_BUILD=0
 }
 
+postproc() {
+  local stage="$1"; shift
+
+  if [ "$ERRS" = "" ]; then
+    echo "${stage}: ok"
+  else
+    echo "----"
+    echo "FAILED: ${ERRS}" | sed -e 's/,/\n  /g'
+    exit 1
+  fi
+}
+
+get_ids() {
+  local max_id="$1"; shift
+
+  if [ $# -eq 1 ]; then
+    echo "$1"
+  else
+    seq 1 $max_id
+  fi
+}
+
 # --------------------------------
 
-test_lex() {
-  ./test_lex.sh "$@"
+test_lex_nn() {
+  local nn="$1"; shift
+
+  echo "case ${nn}"
+
+  local input_file="${TEST_COMMON_DIR}/lex/${nn}.vg.txt"
+  local temp_tokens_file="${TEMP_DIR}/test.tokens.txt"
+  local exp_file="${TEST_COMMON_DIR}/lex/exp_${nn}.txt"
+
+  run_lex $input_file > $temp_tokens_file
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_lex"
+    return
+  fi
+
+  ruby test_common/diff.rb text $exp_file $temp_tokens_file
+  if [ $? -ne 0 ]; then
+    # meld $exp_file $temp_tokens_file &
+
+    ERRS="${ERRS},lex_${nn}_diff"
+    return
+  fi
 }
+
+test_lex() {
+  local ids="$(get_ids $MAX_ID_LEX "$@")"
+
+  for id in $ids; do
+    test_lex_nn $(printf "%02d" $id)
+  done
+}
+
+# --------------------------------
 
 test_compile() {
   ./test_compile.sh "$@"
 }
 
 test_all() {
-  ./test_lex.sh "$@"
+  echo "==== lex ===="
+  test_lex
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_lex"
+    return
+  fi
+
   ./test_compile.sh "$@"
 }
 
@@ -46,6 +134,7 @@ main() {
   case $cmd in
     lex | l*)      #task: Run lex tests
       test_lex "$@"
+      postproc "lex"
   ;; compile | c*) #task: Run compile tests
       test_compile "$@"
   ;; all | a*)    #task: Run all tests
