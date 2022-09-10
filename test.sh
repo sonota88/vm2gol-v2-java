@@ -19,30 +19,24 @@ MAX_ID_COMPILE=27
 
 ERRS=""
 
-# RUNNER_CMD=
-
-runner_cmd() {
-  local artifact=vm2gol_v2
-  local jarfile="${artifact}-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
-  java -jar $(print_project_dir)/target/${jarfile} "$@"
-}
+RUNNER_CMD=$(print_project_dir)/run.sh
 
 run_lex() {
   local infile="$1"; shift
 
-  cat $infile | runner_cmd tokenize
+  cat $infile | $RUNNER_CMD tokenize
 }
 
 run_parse() {
   local infile="$1"; shift
 
-  cat $infile | runner_cmd parse
+  cat $infile | $RUNNER_CMD parse
 }
 
 run_codegen() {
   local infile="$1"; shift
 
-  cat $infile | runner_cmd codegen
+  cat $infile | $RUNNER_CMD codegen
 }
 
 # --------------------------------

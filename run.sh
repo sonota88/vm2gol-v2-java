@@ -20,12 +20,14 @@ if [ "$DO_BUILD" != "0" ]; then
   mvn --quiet -DskipTests=true package 1>&2
 fi
 
-cmd="$1"
+cmd="$1"; shift
 case $cmd in
-  tokenize | parse | codegen)
-    run_jar "$@"
-    ;;
-  *)
-    compile "$@"
-    ;;
+  tokenize | parse | codegen )
+    run_jar $cmd "$@"
+;; compile )
+     compile "$@"
+;; * )
+     echo "unknown command (${cmd})" >&2
+     exit 1
+     ;;
 esac
