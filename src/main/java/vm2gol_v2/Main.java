@@ -18,6 +18,7 @@ public class Main {
         case "tokenize": Tokenizer.run()    ; break;
         case "parse"   : Parser.run()       ; break;
         case "codegen" : CodeGenerator.run(); break;
+        case "test_json": JsonTester.run(); break;
         default:
             throw new IllegalArgumentException(cmd);
         }

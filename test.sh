@@ -14,12 +14,19 @@ readonly TEST_DIR="${PROJECT_DIR}/test"
 readonly TEST_COMMON_DIR="${PROJECT_DIR}/test_common"
 readonly TEMP_DIR="${PROJECT_DIR}/z_tmp"
 
+MAX_ID_JSON=8
 MAX_ID_LEX=3
 MAX_ID_COMPILE=27
 
 ERRS=""
 
 RUNNER_CMD=$(print_project_dir)/run.sh
+
+run_test_json() {
+  local infile="$1"; shift
+
+  cat $infile | $RUNNER_CMD test_json
+}
 
 run_lex() {
   local infile="$1"; shift
@@ -73,6 +80,42 @@ get_ids() {
   else
     seq 1 $max_id
   fi
+}
+
+# --------------------------------
+
+test_json_nn() {
+  local nn="$1"; shift
+
+  echo "case ${nn}"
+
+  local input_file="${TEST_COMMON_DIR}/json/${nn}.json"
+  local temp_json_file="${TEMP_DIR}/test.json"
+  local exp_file="${TEST_COMMON_DIR}/json/${nn}.json"
+
+  run_test_json $input_file > $temp_json_file
+  if [ $? -ne 0 ]; then
+    echo >&2
+    echo "json >>$(cat -A $temp_json_file)<<" >&2
+    ERRS="${ERRS},${nn}_json"
+    return
+  fi
+
+  ruby ${TEST_COMMON_DIR}/diff.rb json $exp_file $temp_json_file
+  if [ $? -ne 0 ]; then
+    # meld $exp_file $temp_json_file &
+
+    ERRS="${ERRS},json_${nn}_diff"
+    return
+  fi
+}
+
+test_json() {
+  local ids="$(get_ids $MAX_ID_JSON "$@")"
+
+  for id in $ids; do
+    test_json_nn $(printf "%02d" $id)
+  done
 }
 
 # --------------------------------
@@ -188,6 +231,13 @@ test_compile() {
 # --------------------------------
 
 test_all() {
+  echo "==== json ===="
+  test_json
+  if [ $? -ne 0 ]; then
+    ERRS="${ERRS},${nn}_json"
+    return
+  fi
+
   echo "==== lex ===="
   test_lex
   if [ $? -ne 0 ]; then
@@ -216,7 +266,10 @@ main() {
   fi
 
   case $cmd in
-    lex | l*)      #task: Run lex tests
+    json | j*)     #task: Run json tests
+      test_json "$@"
+      postproc "json"
+  ;; lex | l*)     #task: Run lex tests
       test_lex "$@"
       postproc "lex"
   ;; compile | c*) #task: Run compile tests

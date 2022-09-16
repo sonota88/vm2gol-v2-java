@@ -22,7 +22,7 @@ fi
 
 cmd="$1"; shift
 case $cmd in
-  tokenize | parse | codegen )
+  test_json | tokenize | parse | codegen )
     run_jar $cmd "$@"
 ;; compile )
      compile "$@"
