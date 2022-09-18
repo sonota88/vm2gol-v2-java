@@ -266,20 +266,25 @@ main() {
   fi
 
   case $cmd in
-    json | j*)     #task: Run json tests
+    json | j* )      #task: Run json tests
       test_json "$@"
       postproc "json"
-  ;; lex | l*)     #task: Run lex tests
+
+  ;; lex | l* )      #task: Run lex tests
       test_lex "$@"
       postproc "lex"
-  ;; compile | c*) #task: Run compile tests
+
+  ;; compile | c* )  #task: Run compile tests
       test_compile "$@"
       postproc "compile"
-  ;; all | a*)    #task: Run all tests
+
+  ;; all | a* )      #task: Run all tests
       test_all "$@"
+
   ;; * )
        echo "Tasks:"
        grep '#task: ' $0 | grep -v grep
+       ;;
   esac
 }
 
