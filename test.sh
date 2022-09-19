@@ -14,13 +14,13 @@ readonly TEST_DIR="${PROJECT_DIR}/test"
 readonly TEST_COMMON_DIR="${PROJECT_DIR}/test_common"
 readonly TEMP_DIR="${PROJECT_DIR}/z_tmp"
 
-MAX_ID_JSON=8
-MAX_ID_LEX=3
-MAX_ID_COMPILE=27
+readonly MAX_ID_JSON=8
+readonly MAX_ID_LEX=3
+readonly MAX_ID_COMPILE=27
+
+readonly RUNNER_CMD=$(print_project_dir)/run.sh
 
 ERRS=""
-
-RUNNER_CMD=$(print_project_dir)/run.sh
 
 run_test_json() {
   local infile="$1"; shift
