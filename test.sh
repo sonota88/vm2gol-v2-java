@@ -339,9 +339,9 @@ main() {
       postproc "all"
 
   ;; * )
-       echo "Tasks:"
-       grep '#task: ' $0 | grep -v grep
-       ;;
+      echo "Tasks:"
+      grep '#task: ' $0 | grep -v grep
+      ;;
   esac
 }
 
