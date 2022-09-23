@@ -336,6 +336,7 @@ main() {
 
   ;; all | a* )      #task: Run all tests
       test_all "$@"
+      postproc "all"
 
   ;; * )
        echo "Tasks:"
