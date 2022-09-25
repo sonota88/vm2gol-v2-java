@@ -3,7 +3,7 @@
 run_jar() {
   local artifact=vm2gol_v2
   local jar_path=target/${artifact}-0.0.1-SNAPSHOT-jar-with-dependencies.jar
-  java -jar $jar_path "$@"
+  java -Dfile.encoding=UTF-8 -jar $jar_path "$@"
 }
 
 compile() {

@@ -305,17 +305,18 @@ test_all() {
   fi
 }
 
-main() {
-  setup
+# --------------------------------
 
-  build
-
+container_main() {
   local cmd=
   if [ $# -ge 1 ]; then
     cmd="$1"; shift
   else
     cmd="show_tasks"
   fi
+
+  setup
+  build
 
   case $cmd in
     json | j* )      #task: Run json tests
@@ -345,4 +346,15 @@ main() {
   esac
 }
 
-main "$@"
+# --------------------------------
+
+in_container() {
+  env | grep --quiet IN_CONTAINER
+}
+
+if (in_container); then
+  container_main "$@"
+else
+  # Run in container
+  ./docker.sh run bash test.sh "$@"
+fi
