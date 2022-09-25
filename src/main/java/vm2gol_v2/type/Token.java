@@ -16,7 +16,7 @@ public class Token {
         IDENT("ident");
 
         private String str;
-        
+
         Kind(String s){
             this.str = s;
         }
@@ -56,7 +56,7 @@ public class Token {
     public String getStr() {
         return this.str;
     }
-    
+
     public String toString() {
         return Utils.toString(this);
     }
