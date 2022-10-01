@@ -11,10 +11,10 @@ import static vm2gol_v2.util.Utils.putskv_e;
 import java.util.ArrayList;
 import java.util.List;
 
-class Tokenizer {
+class Lexer {
 
     public static void run() {
-        new Tokenizer().main(); 
+        new Lexer().main(); 
     }
 
     private void main() {
