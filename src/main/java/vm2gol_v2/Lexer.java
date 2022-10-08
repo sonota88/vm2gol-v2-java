@@ -20,14 +20,14 @@ class Lexer {
     private void main() {
         String src = Utils.readStdinAll();
 
-        List<Token> tokens = tokenize(src);
+        List<Token> tokens = lex(src);
 
         printTokens(tokens);
     }
 
     // --------------------------------
 
-    private List<Token> tokenize(String src) {
+    private List<Token> lex(String src) {
         List<Token> tokens = new ArrayList<>();
         int pos = 0;
         int lineNo = 1;
