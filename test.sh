@@ -32,7 +32,7 @@ run_test_json() {
 run_lex() {
   local infile="$1"; shift
 
-  cat $infile | $RUNNER_CMD tokenize
+  cat $infile | $RUNNER_CMD lex
 }
 
 run_parse() {

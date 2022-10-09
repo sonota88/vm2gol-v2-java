@@ -15,7 +15,7 @@ public class Main {
         String cmd = args[0];
 
         switch (cmd) {
-        case "tokenize" : Lexer.run()        ; break;
+        case "lex"      : Lexer.run()        ; break;
         case "parse"    : Parser.run()       ; break;
         case "codegen"  : CodeGenerator.run(); break;
         case "test_json": JsonTester.run()   ; break;

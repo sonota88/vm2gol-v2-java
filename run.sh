@@ -10,7 +10,7 @@ compile() {
   local srcfile="$1"; shift
 
   cat $srcfile \
-    | run_jar tokenize \
+    | run_jar lex \
     | run_jar parse \
     | run_jar codegen
 }
@@ -23,7 +23,7 @@ fi
 
 cmd="$1"; shift
 case $cmd in
-  test_json | tokenize | parse | codegen )
+  test_json | lex | parse | codegen )
     run_jar $cmd "$@"
 ;; compile )
      compile "$@"
