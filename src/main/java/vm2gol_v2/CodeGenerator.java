@@ -108,7 +108,7 @@ public class CodeGenerator {
         int labelId = CodeGenerator.nextLabelId();
         String labelThen = String.format("then_%d", labelId);
         String labelEnd = String.format("end_neq_%d", labelId);
-        
+
         puts("  pop reg_b");
         puts("  pop reg_a");
 
@@ -246,7 +246,7 @@ public class CodeGenerator {
 
         puts("label %s", labelTrue);
         genStmts(fnArgNames, lvarNames, body);
-        
+
         puts("  jump %s", labelBegin);
 
         puts("label %s", labelEnd);
