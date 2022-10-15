@@ -130,39 +130,18 @@ public class Parser {
         }
     }
 
-    private NodeItem parseArgs_first() {
-        if (peek().is(Token.Kind.SYM, ")")) {
-            return null;
-        }
-
-        return parseArg();
-    }
-
-    private NodeItem parseArgs_rest() {
-        if (peek().is(Token.Kind.SYM, ")")) {
-            return null;
-        }
-
-        consumeSym(",");
-
-        return parseArg();
-    }
-
     private NodeList parseArgs() {
         NodeList args = nodelist();
 
-        NodeItem firstArg = parseArgs_first();
-        if (firstArg == null) {
+        if (peek().is(Token.Kind.SYM, ")")) {
             return args;
         }
-        args.add(firstArg);
 
-        while (true) {
-            NodeItem restArg = parseArgs_rest();
-            if (restArg == null) {
-                break;
-            }
-            args.add(restArg);
+        args.add(parseArg());
+
+        while (! peek().is(Token.Kind.SYM, ")")) {
+            consumeSym(",");
+            args.add(parseArg());
         }
 
         return args;
