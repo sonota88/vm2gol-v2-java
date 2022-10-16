@@ -217,10 +217,6 @@ public class CodeGenerator {
         genExpr(new Names(), lvarNames, retval);
     }
 
-    private void genVmComment(String comment) {
-        puts("  _cmt " + StringUtils.replace(comment, " ", "~"));
-    }
-
     private void genWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
         NodeItem condExpr = rest.first();
         NodeList body = rest.rest().first().getItems();
@@ -291,6 +287,10 @@ public class CodeGenerator {
         }
 
         puts("label %s", labelEnd);
+    }
+
+    private void genVmComment(String comment) {
+        puts("  _cmt " + StringUtils.replace(comment, " ", "~"));
     }
 
     private void genStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
