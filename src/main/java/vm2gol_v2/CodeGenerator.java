@@ -62,14 +62,6 @@ public class CodeGenerator {
 
     // --------------------------------
 
-    private void genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
-        puts("  sub_sp 1");
-
-        if (stmtRest.size() == 2) {
-            genSet(fnArgNames, lvarNames, stmtRest);
-        }
-    }
-
     private void genExpr_add() {
         puts("  pop reg_b");
         puts("  pop reg_a");
@@ -314,6 +306,14 @@ public class CodeGenerator {
         for (NodeItem _stmt : stmts.getList()) {
             NodeList stmt = _stmt.getItems();
             genStmt(fnArgNames, lvarNames, stmt);
+        }
+    }
+
+    private void genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
+        puts("  sub_sp 1");
+
+        if (stmtRest.size() == 2) {
+            genSet(fnArgNames, lvarNames, stmtRest);
         }
     }
 
