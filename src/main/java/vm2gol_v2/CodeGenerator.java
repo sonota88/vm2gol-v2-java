@@ -295,7 +295,6 @@ public class CodeGenerator {
 
     private void genStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
         String stmtHead = stmt.first().getStrVal();
-        NodeList stmtRest = stmt.rest();
 
         switch (stmtHead) {
         case "set"     : genSet(    fnArgNames, lvarNames, stmt); break;
