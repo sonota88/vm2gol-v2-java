@@ -2,7 +2,7 @@
 
 set -o nounset
 
-readonly IMAGE=mini-ruccola-java:1
+readonly IMAGE=mini-ruccola-java:2
 
 build() {
   docker build \
