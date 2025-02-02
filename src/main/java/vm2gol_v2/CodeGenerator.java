@@ -355,8 +355,10 @@ public class CodeGenerator {
         puts("  ret");
     }
 
-    private void genTopStmts(NodeList rest) {
-        for (NodeItem stmt : rest.getList()) {
+    private void genTopStmts(NodeList ast) {
+        NodeList topStmts = ast.rest();
+
+        for (NodeItem stmt : topStmts.getList()) {
             NodeItem stmtHead = stmt.getItems().first();
             if (stmtHead.strEq("func")) {
                 genFuncDef(stmt.getItems());
@@ -384,13 +386,11 @@ public class CodeGenerator {
         puts("  ret");
     }
 
-    void codegen(NodeList nl) {
+    void codegen(NodeList ast) {
         puts("  call main");
         puts("  exit");
 
-        // NodeItem head = nl.first();
-        NodeList rest = nl.rest();
-        genTopStmts(rest);
+        genTopStmts(ast);
 
         puts("#>builtins");
         genBuiltinSetVram();
