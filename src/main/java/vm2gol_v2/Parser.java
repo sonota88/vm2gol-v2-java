@@ -268,7 +268,7 @@ public class Parser {
 
             String _op = op;
             if (StringUtils.equals(_op, "==")) {
-                _op = "eq";
+                _op = "==";
             } else if (StringUtils.equals(_op, "!=")) {
                 _op = "neq";
             }

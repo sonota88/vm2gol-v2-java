@@ -130,7 +130,7 @@ public class CodeGenerator {
 
         if      (operator.strEq("+"  )) { genExpr_add() ; }
         else if (operator.strEq("*"  )) { genExpr_mult(); }
-        else if (operator.strEq("eq" )) { genExpr_eq()  ; }
+        else if (operator.strEq("==" )) { genExpr_eq()  ; }
         else if (operator.strEq("neq")) { genExpr_neq() ; }
         else {
             throw unsupported(operator);
