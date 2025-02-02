@@ -351,8 +351,6 @@ public class CodeGenerator {
 
             if (stmtHead.strEq("func")) {
                 genFuncDef(stmtRest);
-            } else if (stmtHead.strEq("_cmt")) {
-                genVmComment(stmtRest.first().getStrVal());
             } else {
                 throw unsupported(stmtHead);
             }
