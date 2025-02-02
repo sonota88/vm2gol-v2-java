@@ -175,7 +175,7 @@ public class CodeGenerator {
         genVmComment("call  " + fnName);
         puts("  call %s", fnName);
 
-        puts("  add_sp %d", fnArgs.size());
+        puts("  add sp %d", fnArgs.size());
     }
 
     private void genCall(Names fnArgNames, Names lvarNames, NodeList stmt) {
@@ -318,7 +318,7 @@ public class CodeGenerator {
     }
 
     private void genVar(Names fnArgNames, Names lvarNames, NodeList stmt) {
-        puts("  add_sp -1");
+        puts("  add sp -1");
 
         if (stmt.size() == 3) {
             NodeItem dest = stmt.get(1);
