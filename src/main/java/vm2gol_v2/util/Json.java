@@ -85,9 +85,9 @@ public class Json {
         NodeList nodeList;
         int size;
 
-        ParseResult(NodeList nodeList, int pos){
+        ParseResult(NodeList nodeList, int size){
             this.nodeList = nodeList;
-            this.size = pos;
+            this.size = size;
         }
     }
 
