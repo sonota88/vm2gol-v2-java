@@ -326,10 +326,10 @@ public class CodeGenerator {
         }
     }
 
-    private void genFuncDef(NodeList rest) {
-        String fnName = rest.get(0).getStrVal();
-        Names fnArgNames = Names.fromNodeList(rest.get(1).getItems());
-        NodeList body = rest.get(2).getItems();
+    private void genFuncDef(NodeList funcDef) {
+        String fnName = funcDef.get(1).getStrVal();
+        Names fnArgNames = Names.fromNodeList(funcDef.get(2).getItems());
+        NodeList body = funcDef.get(3).getItems();
 
         puts("");
         puts("label %s", fnName);
@@ -359,10 +359,8 @@ public class CodeGenerator {
     private void genTopStmts(NodeList rest) {
         for (NodeItem stmt : rest.getList()) {
             NodeItem stmtHead = stmt.getItems().first();
-            NodeList stmtRest = stmt.getItems().rest();
-
             if (stmtHead.strEq("func")) {
-                genFuncDef(stmtRest);
+                genFuncDef(stmt.getItems());
             } else {
                 throw unsupported(stmtHead);
             }
