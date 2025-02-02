@@ -163,6 +163,21 @@ public class CodeGenerator {
         }
     }
 
+    private void genFuncall(Names fnArgNames, Names lvarNames, NodeList funcall) {
+        String fnName = funcall.first().getStrVal();
+        NodeList fnArgs = funcall.rest();
+
+        for (NodeItem fnArg : fnArgs.reverse().getList()) {
+            genExpr(fnArgNames, lvarNames, fnArg);
+            puts("  push reg_a");
+        }
+
+        genVmComment("call  " + fnName);
+        puts("  call %s", fnName);
+
+        puts("  add_sp %d", fnArgs.size());
+    }
+
     private void genCall(Names fnArgNames, Names lvarNames, NodeList funcall) {
         String fnName = funcall.first().getStrVal();
         NodeList fnArgs = funcall.rest();
