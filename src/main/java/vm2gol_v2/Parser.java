@@ -68,6 +68,12 @@ public class Parser {
         return peek(0);
     }
 
+    private Token peekAndIncrement() {
+        Token t = peek();
+        this.pos++;
+        return t;
+    }
+
     private void assertValue(Token t, Token.Kind kind, String expected) {
         if (t.kind != kind) {
             throw invalidKind(t);
@@ -150,8 +156,7 @@ public class Parser {
     private NodeList parseFunc() {
         consumeKw("func");
 
-        Token t = peek();
-        pos++;
+        Token t = peekAndIncrement();
         String fnName = t.getStr();
 
         consumeSym("(");
@@ -179,8 +184,7 @@ public class Parser {
     }
 
     private NodeList parseVar_declare() {
-        Token t = peek();
-        this.pos++;
+        Token t = peekAndIncrement();
         String varName = t.getStr();
 
         consumeSym(";");
@@ -192,8 +196,7 @@ public class Parser {
     }
 
     private NodeList parseVar_init() {
-        Token t = peek();
-        this.pos++;
+        Token t = peekAndIncrement();
         String varName = t.getStr();
 
         consumeSym("=");
@@ -260,8 +263,8 @@ public class Parser {
         NodeItem expr = parseExprFactor();
 
         while (isBinOp(peek(0))) {
-            String op = peek(0).getStr();
-            pos++;
+            Token t = peekAndIncrement();
+            String op = t.getStr();
 
             String _op = op;
             if (StringUtils.equals(_op, "==")) {
@@ -286,8 +289,7 @@ public class Parser {
     private NodeList parseSet() {
         consumeKw("set");
 
-        Token t = peek();
-        pos++;
+        Token t = peekAndIncrement();
         String varName = t.getStr();
 
         consumeSym("=");
@@ -304,8 +306,7 @@ public class Parser {
     }
 
     private NodeList parseFuncall() {
-        Token t = peek();
-        pos++;
+        Token t = peekAndIncrement();
         String fnName = t.getStr();
 
         consumeSym("(");
@@ -334,8 +335,7 @@ public class Parser {
     private NodeList parseCallSet() {
         consumeKw("call_set");
 
-        Token t = peek();
-        pos++;
+        Token t = peekAndIncrement();
         String varName = t.getStr();
         
         consumeSym("=");
@@ -429,8 +429,7 @@ public class Parser {
         consumeKw("_cmt");
         consumeSym("(");
 
-        Token t = peek();
-        pos++;
+        Token t = peekAndIncrement();
         String comment = t.getStr();
 
         consumeSym(")");
