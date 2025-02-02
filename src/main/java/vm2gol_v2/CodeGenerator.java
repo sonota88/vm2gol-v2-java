@@ -343,8 +343,7 @@ public class CodeGenerator {
         for (NodeItem stmt : body.getList()) {
             NodeList _stmt = stmt.getItems();
             if (_stmt.first().strEq("var")) {
-                NodeList stmtRest = _stmt.rest(); 
-                lvarNames.add(stmtRest.first().getStrVal());
+                lvarNames.add(_stmt.get(1).getStrVal());
                 genVar(fnArgNames, lvarNames, _stmt);
             } else {
                 genStmt(fnArgNames, lvarNames, _stmt);
