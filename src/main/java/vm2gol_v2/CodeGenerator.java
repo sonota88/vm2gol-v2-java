@@ -179,25 +179,14 @@ public class CodeGenerator {
     }
 
     private void genCall(Names fnArgNames, Names lvarNames, NodeList funcall) {
-        String fnName = funcall.first().getStrVal();
-        NodeList fnArgs = funcall.rest();
-
-        for (NodeItem fnArg : fnArgs.reverse().getList()) {
-            genExpr(fnArgNames, lvarNames, fnArg);
-            puts("  push reg_a");
-        }
-
-        genVmComment("call  " + fnName);
-        puts("  call %s", fnName);
-
-        puts("  add_sp %d", fnArgs.size());
+        genFuncall(fnArgNames, lvarNames, funcall);
     }
 
     private void genCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
         String lvarName = stmtRest.first().getStrVal();
         NodeList funcall = stmtRest.get(1).getItems();
 
-        genCall(fnArgNames, lvarNames, funcall);
+        genFuncall(fnArgNames, lvarNames, funcall);
 
         int disp = lvarDisp(lvarNames, lvarName);
         puts("  cp reg_a [bp:%d]", disp);
