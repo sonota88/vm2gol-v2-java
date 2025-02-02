@@ -178,7 +178,8 @@ public class CodeGenerator {
         puts("  add_sp %d", fnArgs.size());
     }
 
-    private void genCall(Names fnArgNames, Names lvarNames, NodeList funcall) {
+    private void genCall(Names fnArgNames, Names lvarNames, NodeList stmt) {
+        NodeList funcall = stmt.rest();
         genFuncall(fnArgNames, lvarNames, funcall);
     }
 
@@ -295,7 +296,7 @@ public class CodeGenerator {
 
         switch (stmtHead) {
         case "set"     : genSet(    fnArgNames, lvarNames, stmtRest); break;
-        case "call"    : genCall(   fnArgNames, lvarNames, stmtRest); break;
+        case "call"    : genCall(   fnArgNames, lvarNames, stmt    ); break;
         case "call_set": genCallSet(fnArgNames, lvarNames, stmtRest); break;
         case "return"  : genReturn(             lvarNames, stmtRest); break;
         case "while"   : genWhile(  fnArgNames, lvarNames, stmtRest); break;
