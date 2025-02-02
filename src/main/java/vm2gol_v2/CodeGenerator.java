@@ -52,11 +52,11 @@ public class CodeGenerator {
 
     private void asmPrologue() {
         puts("  push bp");
-        puts("  mov sp bp");
+        puts("  mov bp sp");
     }
 
     private void asmEpilogue() {
-        puts("  mov bp sp");
+        puts("  mov sp bp");
         puts("  pop bp");
     }
 
@@ -87,11 +87,11 @@ public class CodeGenerator {
         puts("  compare");
         puts("  jump_eq %s", labelThen);
 
-        puts("  mov 0 reg_a");
+        puts("  mov reg_a 0");
         puts("  jump %s", labelEnd);
 
         puts("label %s", labelThen);
-        puts("  mov 1 reg_a");
+        puts("  mov reg_a 1");
 
         puts("label %s", labelEnd);
     }
@@ -107,11 +107,11 @@ public class CodeGenerator {
         puts("  compare");
         puts("  jump_eq %s", labelThen);
 
-        puts("  mov 1 reg_a");
+        puts("  mov reg_a 1");
         puts("  jump %s", labelEnd);
 
         puts("label %s", labelThen);
-        puts("  mov 0 reg_a");
+        puts("  mov reg_a 0");
 
         puts("label %s", labelEnd);
     }
@@ -140,17 +140,17 @@ public class CodeGenerator {
     private void genExpr(Names fnArgNames, Names lvarNames, NodeItem expr) {
         switch (expr.type) {
         case INT:
-            puts("  mov %d reg_a", expr.getIntVal());
+            puts("  mov reg_a %d", expr.getIntVal());
             break;
         case STR:
             if (lvarNames.contains(expr.getStrVal())) {
                 String lvarName = expr.getStrVal();
                 int disp = lvarDisp(lvarNames, lvarName);
-                puts("  mov [bp:%d] reg_a", disp);
+                puts("  mov reg_a [bp:%d]", disp);
             } else if (fnArgNames.contains(expr.getStrVal())) {
                 String fnArgName = expr.getStrVal();
                 int disp = fnArgDisp(fnArgNames, fnArgName);
-                puts("  mov [bp:%d] reg_a", disp);
+                puts("  mov reg_a [bp:%d]", disp);
             } else {
                 throw unsupported(expr);
             }
@@ -190,7 +190,7 @@ public class CodeGenerator {
         genFuncall(fnArgNames, lvarNames, funcall);
 
         int disp = lvarDisp(lvarNames, lvarName);
-        puts("  mov reg_a [bp:%d]", disp);
+        puts("  mov [bp:%d] reg_a", disp);
     }
 
     private void _genSet(Names fnArgNames, Names lvarNames, NodeItem dest, NodeItem expr) {
@@ -200,7 +200,7 @@ public class CodeGenerator {
         String destStr = dest.getStrVal();
         if (lvarNames.contains(destStr)) {
             int disp = lvarDisp(lvarNames, destStr);
-            puts("  mov %s [bp:%d]", srcVal, disp);
+            puts("  mov [bp:%d] %s", disp, srcVal);
         } else {
             throw unsupported(destStr);
         }
@@ -235,7 +235,7 @@ public class CodeGenerator {
 
         // 条件の評価
         genExpr(fnArgNames, lvarNames, condExpr);
-        puts("  mov 0 reg_b");
+        puts("  mov reg_b 0");
         puts("  compare");
 
         puts("  jump_eq %s", labelEnd);
@@ -270,7 +270,7 @@ public class CodeGenerator {
                     );
 
             genExpr(fnArgNames, lvarNames, cond);
-            puts("  mov 0 reg_b");
+            puts("  mov reg_b 0");
             puts("  compare");
 
             puts("  jump_eq %s_%d", labelEndWhenHead, whenIdx);
