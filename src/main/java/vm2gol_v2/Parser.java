@@ -414,8 +414,7 @@ public class Parser {
         NodeList whenClauses = nodelist();
 
         while (! peek().is(Token.Kind.SYM, "}")) {
-            NodeList whenClause = parseWhenClause();
-            whenClauses.add(whenClause);
+            whenClauses.add(parseWhenClause());
         }
 
         consumeSym("}");
