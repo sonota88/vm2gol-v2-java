@@ -10,8 +10,14 @@ import static vm2gol_v2.util.Utils.putskv_e;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 class Lexer {
+
+    private final Set<String> KEYWORD_SET = Set.of(
+            "func", "set", "var", "call_set", "call", "return", "case", "while",
+            "_cmt", "_debug"
+    );
 
     public static void run() {
         new Lexer().main(); 
@@ -54,11 +60,6 @@ class Lexer {
                 tokens.add(new Token(lineNo, Kind.STR, s));
                 pos += s.length() + 2;
 
-            } else if (re.match("^(func|set|var|call_set|call|return|case|while|_cmt|_debug)[^a-z_]", rest)) {
-                String s = re.group(1);
-                tokens.add(new Token(lineNo, Kind.KW, s));
-                pos += s.length();
-
             } else if (re.match("^(-?[0-9]+)", rest)) {
                 String s = re.group(1);
                 tokens.add(new Token(lineNo, Kind.INT, s));
@@ -71,7 +72,8 @@ class Lexer {
 
             } else if (re.match("^([a-z_][a-z0-9_]*)", rest)) {
                 String s = re.group(1);
-                tokens.add(new Token(lineNo, Kind.IDENT, s));
+                Kind kind = isKeyword(s) ? Kind.KW : Kind.IDENT;
+                tokens.add(new Token(lineNo, kind, s));
                 pos += s.length();
 
             } else {
@@ -86,6 +88,10 @@ class Lexer {
         }
 
         return tokens;
+    }
+
+    private boolean isKeyword(String str) {
+        return KEYWORD_SET.contains(str);
     }
 
     private void printTokens(List<Token> tokens) {
