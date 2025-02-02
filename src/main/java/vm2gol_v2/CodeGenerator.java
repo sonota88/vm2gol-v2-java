@@ -128,10 +128,10 @@ public class CodeGenerator {
         genExpr(fnArgNames, lvarNames, termR);
         puts("  push reg_a");
 
-        if      (operator.strEq("+"  )) { genExpr_add() ; }
-        else if (operator.strEq("*"  )) { genExpr_mult(); }
-        else if (operator.strEq("==" )) { genExpr_eq()  ; }
-        else if (operator.strEq("!=" )) { genExpr_neq() ; }
+        if      (operator.strEq("+" )) { genExpr_add() ; }
+        else if (operator.strEq("*" )) { genExpr_mult(); }
+        else if (operator.strEq("==")) { genExpr_eq()  ; }
+        else if (operator.strEq("!=")) { genExpr_neq() ; }
         else {
             throw unsupported(operator);
         }
