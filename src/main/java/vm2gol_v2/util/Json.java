@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 public class Json {
 
     private static final String LF = "\n";
-//    private static final String BS = "\\";
     private static final String DQ = "\"";
 
     private static final String INDENT_SPACES = "  ";
@@ -43,7 +42,7 @@ public class Json {
                 s += "," + LF;
             }
         }
-        
+
         s += LF;
         s += "]" + LF;
 
@@ -72,7 +71,7 @@ public class Json {
         if (lv >= 1) {
             spaces = INDENT_SPACES;
         }
-        
+
         for (String line : lines) {
             lines2.add(
                     spaces + line
@@ -85,18 +84,16 @@ public class Json {
         NodeList nodeList;
         int size;
 
-        ParseResult(NodeList nodeList, int size){
+        ParseResult(NodeList nodeList, int size) {
             this.nodeList = nodeList;
             this.size = size;
         }
     }
 
-    
     public static NodeList parse(String json) {
         return _parse(json).nodeList;
     }
 
-    
     public static ParseResult _parse(String json) {
         int pos = 1;
         NodeList xs = new NodeList();
@@ -105,7 +102,7 @@ public class Json {
 
         while (pos <= json.length()) {
             String rest = json.substring(pos);
-            
+
             if (rest.startsWith("[")) {
                 ParseResult pr = _parse(rest);
                 xs.add(pr.nodeList);

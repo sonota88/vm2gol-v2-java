@@ -337,7 +337,7 @@ public class Parser {
 
         Token t = peekAndIncrement();
         String varName = t.getStr();
-        
+
         consumeSym("=");
 
         NodeList funcall = parseFuncall();
