@@ -379,10 +379,7 @@ public class Parser {
     }
 
     private NodeList parseWhenClause() {
-        Token t = peek();
-        if (t.is(Token.Kind.SYM, "}")) {
-            return NodeList.empty();
-        }
+        consumeKw("when");
 
         consumeSym("(");
         NodeItem expr = parseExpr();
@@ -401,15 +398,11 @@ public class Parser {
     private NodeList parseCase() {
         consumeKw("case");
 
-        consumeSym("{");
-
         NodeList whenClauses = nodelist();
 
-        while (! peek().is(Token.Kind.SYM, "}")) {
+        while (peek().is(Token.Kind.KW, "when")) {
             whenClauses.add(parseWhenClause());
         }
-
-        consumeSym("}");
 
         return nodelist()
                 .add("case")

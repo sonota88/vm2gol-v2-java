@@ -15,7 +15,7 @@ import java.util.Set;
 class Lexer {
 
     private final Set<String> KEYWORD_SET = Set.of(
-            "func", "set", "var", "call_set", "call", "return", "case", "while",
+            "func", "set", "var", "call_set", "call", "return", "case", "when", "while",
             "_cmt", "_debug"
     );
 
