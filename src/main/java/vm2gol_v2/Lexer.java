@@ -54,7 +54,7 @@ class Lexer {
                 tokens.add(new Token(lineNo, Kind.STR, s));
                 pos += s.length() + 2;
 
-            } else if (re.match("^(func|set|var|call_set|call|return|case|while|_cmt)[^a-z_]", rest)) {
+            } else if (re.match("^(func|set|var|call_set|call|return|case|while|_cmt|_debug)[^a-z_]", rest)) {
                 String s = re.group(1);
                 tokens.add(new Token(lineNo, Kind.KW, s));
                 pos += s.length();

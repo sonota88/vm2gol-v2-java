@@ -447,6 +447,17 @@ public class Parser {
                 ;
     }
 
+    private NodeList parseVmDebug() {
+        consumeKw("_debug");
+        consumeSym("(");
+        consumeSym(")");
+        consumeSym(";");
+
+        return nodelist()
+                .add("_debug")
+                ;
+    }
+
     private NodeList parseStmt() {
         Token t = peek();
 
@@ -458,6 +469,7 @@ public class Parser {
         case "while"   : return parseWhile();
         case "case"    : return parseCase();
         case "_cmt"    : return parseVmComment();
+        case "_debug"  : return parseVmDebug();
         default:
             throw unexpected("Unexpected token");
         }

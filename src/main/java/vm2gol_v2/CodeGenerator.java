@@ -285,6 +285,10 @@ public class CodeGenerator {
         puts("  _cmt " + StringUtils.replace(comment, " ", "~"));
     }
 
+    private void genVmDebug() {
+        puts("  _debug");
+    }
+
     private void genStmt(Names fnArgNames, Names lvarNames, NodeList stmt) {
         String stmtHead = stmt.first().getStrVal();
         NodeList stmtRest = stmt.rest();
@@ -297,6 +301,7 @@ public class CodeGenerator {
         case "while"   : genWhile(  fnArgNames, lvarNames, stmtRest); break;
         case "case"    : genCase(   fnArgNames, lvarNames, stmtRest); break;
         case "_cmt"    : genVmComment(stmtRest.get(0).getStrVal());   break;
+        case "_debug"  : genVmDebug()                               ; break;
         default:
             throw unsupported(stmtHead);
         }
