@@ -302,7 +302,7 @@ public class CodeGenerator {
         case "return"  : genReturn(             lvarNames, stmt    ); break;
         case "while"   : genWhile(  fnArgNames, lvarNames, stmt    ); break;
         case "case"    : genCase(   fnArgNames, lvarNames, stmt    ); break;
-        case "_cmt"    : genVmComment(stmtRest.get(0).getStrVal())  ; break;
+        case "_cmt"    : genVmComment(stmt.get(1).getStrVal())      ; break;
         case "_debug"  : genVmDebug()                               ; break;
         default:
             throw unsupported(stmtHead);
