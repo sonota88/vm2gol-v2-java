@@ -73,7 +73,7 @@ public class CodeGenerator {
         puts("  pop reg_b");
         puts("  pop reg_a");
 
-        puts("  mult_ab");
+        puts("  mul");
     }
 
     private void genExpr_eq() {
