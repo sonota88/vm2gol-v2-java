@@ -220,7 +220,7 @@ public class CodeGenerator {
 
     private void genWhile(Names fnArgNames, Names lvarNames, NodeList stmt) {
         NodeItem condExpr = stmt.get(1);
-        NodeList body = stmt.get(2).getItems();
+        NodeList stmts = stmt.get(2).getItems();
 
         int labelId = CodeGenerator.nextLabelId();
 
@@ -238,7 +238,7 @@ public class CodeGenerator {
 
         puts("  jump_eq %s", labelEnd);
 
-        genStmts(fnArgNames, lvarNames, body);
+        genStmts(fnArgNames, lvarNames, stmts);
 
         puts("  jump %s", labelBegin);
 
@@ -260,7 +260,7 @@ public class CodeGenerator {
             whenIdx++;
 
             NodeItem cond = whenClause.first();
-            NodeList rest = whenClause.rest();
+            NodeList stmts = whenClause.rest();
 
             puts(
                     "  # 条件 %d_%d: %s",
@@ -273,7 +273,7 @@ public class CodeGenerator {
 
             puts("  jump_eq %s_%d", labelEndWhenHead, whenIdx);
 
-            genStmts(fnArgNames, lvarNames, rest);
+            genStmts(fnArgNames, lvarNames, stmts);
 
             puts("  jump %s", labelEnd);
 
