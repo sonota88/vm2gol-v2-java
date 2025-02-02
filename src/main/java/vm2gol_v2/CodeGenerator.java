@@ -188,6 +188,19 @@ public class CodeGenerator {
         puts("  cp reg_a [bp:%d]", disp);
     }
 
+    private void _genSet(Names fnArgNames, Names lvarNames, NodeItem dest, NodeItem expr) {
+        genExpr(fnArgNames, lvarNames, expr);
+        String srcVal = "reg_a";
+
+        String destStr = dest.getStrVal();
+        if (lvarNames.contains(destStr)) {
+            int disp = lvarDisp(lvarNames, destStr);
+            puts("  cp %s [bp:%d]", srcVal, disp);
+        } else {
+            throw unsupported(destStr);
+        }
+    }
+
     private void genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
         NodeItem dest = rest.get(0);
         NodeItem expr = rest.get(1);
