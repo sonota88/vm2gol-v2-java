@@ -317,7 +317,7 @@ public class CodeGenerator {
     }
 
     private void genVar(Names fnArgNames, Names lvarNames, NodeList stmt) {
-        puts("  sub_sp 1");
+        puts("  add_sp -1");
 
         if (stmt.size() == 3) {
             NodeItem dest = stmt.get(1);
