@@ -217,7 +217,6 @@ public class CodeGenerator {
 
         String labelBegin = String.format("while_%d", labelId);
         String labelEnd = String.format("end_while_%d", labelId);
-        String labelTrue = String.format("true_%d", labelId);
 
         puts("");
 
@@ -225,14 +224,11 @@ public class CodeGenerator {
 
         // 条件の評価
         genExpr(fnArgNames, lvarNames, condExpr);
-        puts("  cp 1 reg_b");
+        puts("  cp 0 reg_b");
         puts("  compare");
 
-        puts("  jump_eq %s", labelTrue);
+        puts("  jump_eq %s", labelEnd);
 
-        puts("  jump %s", labelEnd);
-
-        puts("label %s", labelTrue);
         genStmts(fnArgNames, lvarNames, body);
 
         puts("  jump %s", labelBegin);
