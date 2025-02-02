@@ -183,9 +183,9 @@ public class CodeGenerator {
         genFuncall(fnArgNames, lvarNames, funcall);
     }
 
-    private void genCallSet(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
-        String lvarName = stmtRest.first().getStrVal();
-        NodeList funcall = stmtRest.get(1).getItems();
+    private void genCallSet(Names fnArgNames, Names lvarNames, NodeList stmt) {
+        String lvarName = stmt.get(1).getStrVal();
+        NodeList funcall = stmt.get(2).getItems();
 
         genFuncall(fnArgNames, lvarNames, funcall);
 
@@ -297,7 +297,7 @@ public class CodeGenerator {
         switch (stmtHead) {
         case "set"     : genSet(    fnArgNames, lvarNames, stmtRest); break;
         case "call"    : genCall(   fnArgNames, lvarNames, stmt    ); break;
-        case "call_set": genCallSet(fnArgNames, lvarNames, stmtRest); break;
+        case "call_set": genCallSet(fnArgNames, lvarNames, stmt    ); break;
         case "return"  : genReturn(             lvarNames, stmtRest); break;
         case "while"   : genWhile(  fnArgNames, lvarNames, stmtRest); break;
         case "case"    : genCase(   fnArgNames, lvarNames, stmtRest); break;
