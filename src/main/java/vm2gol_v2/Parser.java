@@ -270,7 +270,7 @@ public class Parser {
             if (StringUtils.equals(_op, "==")) {
                 _op = "==";
             } else if (StringUtils.equals(_op, "!=")) {
-                _op = "neq";
+                _op = "!=";
             }
 
             NodeItem rhs = parseExprFactor();
