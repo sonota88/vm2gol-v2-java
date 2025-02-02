@@ -218,9 +218,9 @@ public class CodeGenerator {
         genExpr(new Names(), lvarNames, retval);
     }
 
-    private void genWhile(Names fnArgNames, Names lvarNames, NodeList rest) {
-        NodeItem condExpr = rest.first();
-        NodeList body = rest.rest().first().getItems();
+    private void genWhile(Names fnArgNames, Names lvarNames, NodeList stmt) {
+        NodeItem condExpr = stmt.get(1);
+        NodeList body = stmt.get(2).getItems();
 
         int labelId = CodeGenerator.nextLabelId();
 
@@ -300,7 +300,7 @@ public class CodeGenerator {
         case "call"    : genCall(   fnArgNames, lvarNames, stmt    ); break;
         case "call_set": genCallSet(fnArgNames, lvarNames, stmt    ); break;
         case "return"  : genReturn(             lvarNames, stmt    ); break;
-        case "while"   : genWhile(  fnArgNames, lvarNames, stmtRest); break;
+        case "while"   : genWhile(  fnArgNames, lvarNames, stmt    ); break;
         case "case"    : genCase(   fnArgNames, lvarNames, stmt    ); break;
         case "_cmt"    : genVmComment(stmtRest.get(0).getStrVal())  ; break;
         case "_debug"  : genVmDebug()                               ; break;
