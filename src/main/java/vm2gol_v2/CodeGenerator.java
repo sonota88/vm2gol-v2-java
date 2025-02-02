@@ -205,16 +205,7 @@ public class CodeGenerator {
         NodeItem dest = rest.get(0);
         NodeItem expr = rest.get(1);
 
-        genExpr(fnArgNames, lvarNames, expr);
-        String srcVal = "reg_a";
-
-        String destStr = dest.getStrVal();
-        if (lvarNames.contains(destStr)) {
-            int disp = lvarDisp(lvarNames, destStr);
-            puts("  cp %s [bp:%d]", srcVal, disp);
-        } else {
-            throw unsupported(destStr);
-        }
+        _genSet(fnArgNames, lvarNames, dest, expr);
     }
 
     private void genReturn(Names lvarNames, NodeList stmtRest) {
@@ -323,7 +314,9 @@ public class CodeGenerator {
         puts("  sub_sp 1");
 
         if (stmtRest.size() == 2) {
-            genSet(fnArgNames, lvarNames, stmtRest);
+            NodeItem dest = stmtRest.get(0);
+            NodeItem expr = stmtRest.get(1);
+            _genSet(fnArgNames, lvarNames, dest, expr);
         }
     }
 
