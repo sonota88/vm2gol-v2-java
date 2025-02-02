@@ -84,7 +84,7 @@ public class CodeGenerator {
         puts("  pop reg_b");
         puts("  pop reg_a");
 
-        puts("  compare");
+        puts("  cmp");
         puts("  je %s", labelThen);
 
         puts("  mov reg_a 0");
@@ -104,7 +104,7 @@ public class CodeGenerator {
         puts("  pop reg_b");
         puts("  pop reg_a");
 
-        puts("  compare");
+        puts("  cmp");
         puts("  je %s", labelThen);
 
         puts("  mov reg_a 1");
@@ -236,7 +236,7 @@ public class CodeGenerator {
         // 条件の評価
         genExpr(fnArgNames, lvarNames, condExpr);
         puts("  mov reg_b 0");
-        puts("  compare");
+        puts("  cmp");
 
         puts("  je %s", labelEnd);
 
@@ -271,7 +271,7 @@ public class CodeGenerator {
 
             genExpr(fnArgNames, lvarNames, cond);
             puts("  mov reg_b 0");
-            puts("  compare");
+            puts("  cmp");
 
             puts("  je %s_%d", labelEndWhenHead, whenIdx);
 
