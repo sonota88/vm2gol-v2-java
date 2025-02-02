@@ -85,7 +85,7 @@ public class CodeGenerator {
         puts("  pop reg_a");
 
         puts("  compare");
-        puts("  jump_eq %s", labelThen);
+        puts("  je %s", labelThen);
 
         puts("  mov reg_a 0");
         puts("  jmp %s", labelEnd);
@@ -105,7 +105,7 @@ public class CodeGenerator {
         puts("  pop reg_a");
 
         puts("  compare");
-        puts("  jump_eq %s", labelThen);
+        puts("  je %s", labelThen);
 
         puts("  mov reg_a 1");
         puts("  jmp %s", labelEnd);
@@ -238,7 +238,7 @@ public class CodeGenerator {
         puts("  mov reg_b 0");
         puts("  compare");
 
-        puts("  jump_eq %s", labelEnd);
+        puts("  je %s", labelEnd);
 
         genStmts(fnArgNames, lvarNames, stmts);
 
@@ -273,7 +273,7 @@ public class CodeGenerator {
             puts("  mov reg_b 0");
             puts("  compare");
 
-            puts("  jump_eq %s_%d", labelEndWhenHead, whenIdx);
+            puts("  je %s_%d", labelEndWhenHead, whenIdx);
 
             genStmts(fnArgNames, lvarNames, stmts);
 
