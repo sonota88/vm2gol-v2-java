@@ -243,7 +243,6 @@ public class CodeGenerator {
         int whenIdx = -1;
 
         String labelEnd = String.format("end_case_%d", labelId);
-        String labelWhenHead = String.format("when_%d", labelId);
         String labelEndWhenHead = String.format("end_when_%d", labelId);
 
         for (NodeItem _whenClause : whenClauses.getList()) {
@@ -259,13 +258,10 @@ public class CodeGenerator {
                     );
 
             genExpr(fnArgNames, lvarNames, cond);
-            puts("  cp 1 reg_b");
-
+            puts("  cp 0 reg_b");
             puts("  compare");
-            puts("  jump_eq %s_%d", labelWhenHead, whenIdx);
-            puts("  jump %s_%d", labelEndWhenHead, whenIdx);
 
-            puts("label %s_%d", labelWhenHead, whenIdx);
+            puts("  jump_eq %s_%d", labelEndWhenHead, whenIdx);
 
             genStmts(fnArgNames, lvarNames, rest);
 
