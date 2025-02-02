@@ -213,7 +213,7 @@ public class CodeGenerator {
         _genSet(fnArgNames, lvarNames, dest, expr);
     }
 
-    private void genReturn(Names lvarNames, NodeList stmt) {
+    private void genReturn(Names fnArgNames, Names lvarNames, NodeList stmt) {
         NodeItem retval = stmt.get(1);
         genExpr(new Names(), lvarNames, retval);
         asmEpilogue();
@@ -300,7 +300,7 @@ public class CodeGenerator {
         case "set"     : genSet(    fnArgNames, lvarNames, stmt); break;
         case "call"    : genCall(   fnArgNames, lvarNames, stmt); break;
         case "call_set": genCallSet(fnArgNames, lvarNames, stmt); break;
-        case "return"  : genReturn(             lvarNames, stmt); break;
+        case "return"  : genReturn( fnArgNames, lvarNames, stmt); break;
         case "while"   : genWhile(  fnArgNames, lvarNames, stmt); break;
         case "case"    : genCase(   fnArgNames, lvarNames, stmt); break;
         case "_cmt"    : genVmComment(stmt.get(1).getStrVal())  ; break;
