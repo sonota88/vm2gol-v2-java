@@ -206,9 +206,9 @@ public class CodeGenerator {
         }
     }
 
-    private void genSet(Names fnArgNames, Names lvarNames, NodeList rest) {
-        NodeItem dest = rest.get(0);
-        NodeItem expr = rest.get(1);
+    private void genSet(Names fnArgNames, Names lvarNames, NodeList stmt) {
+        NodeItem dest = stmt.get(1);
+        NodeItem expr = stmt.get(2);
 
         _genSet(fnArgNames, lvarNames, dest, expr);
     }
@@ -295,7 +295,7 @@ public class CodeGenerator {
         NodeList stmtRest = stmt.rest();
 
         switch (stmtHead) {
-        case "set"     : genSet(    fnArgNames, lvarNames, stmtRest); break;
+        case "set"     : genSet(    fnArgNames, lvarNames, stmt    ); break;
         case "call"    : genCall(   fnArgNames, lvarNames, stmt    ); break;
         case "call_set": genCallSet(fnArgNames, lvarNames, stmt    ); break;
         case "return"  : genReturn(             lvarNames, stmtRest); break;
