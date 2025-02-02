@@ -4,7 +4,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-    openjdk-8-jdk-headless \
+    locales locales-all \
+    openjdk-21-jdk-headless \
     ruby \
     maven \
   && apt-get clean \
@@ -23,3 +24,4 @@ USER ${USER}
 WORKDIR /home/${USER}/work
 
 ENV IN_CONTAINER=1
+ENV LANG=en_US.UTF-8
