@@ -82,18 +82,18 @@ public class Json {
     }
 
     static class ParseResult {
-        NodeList nl;
+        NodeList nodeList;
         int size;
 
-        ParseResult(NodeList nl, int pos){
-            this.nl = nl;
+        ParseResult(NodeList nodeList, int pos){
+            this.nodeList = nodeList;
             this.size = pos;
         }
     }
 
     
     public static NodeList parse(String json) {
-        return _parse(json).nl;
+        return _parse(json).nodeList;
     }
 
     
@@ -108,7 +108,7 @@ public class Json {
             
             if (rest.startsWith("[")) {
                 ParseResult pr = _parse(rest);
-                xs.add(pr.nl);
+                xs.add(pr.nodeList);
                 pos += pr.size;
             } else if (rest.startsWith("]")) {
                 pos++;
