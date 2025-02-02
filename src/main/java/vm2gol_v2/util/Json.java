@@ -81,11 +81,11 @@ public class Json {
         return String.join(LF, lines2);
     }
 
-    static class ParseRetval {
+    static class ParseResult {
         NodeList nl;
         int size;
 
-        ParseRetval(NodeList nl, int pos){
+        ParseResult(NodeList nl, int pos){
             this.nl = nl;
             this.size = pos;
         }
@@ -97,7 +97,7 @@ public class Json {
     }
 
     
-    public static ParseRetval _parse(String json) {
+    public static ParseResult _parse(String json) {
         int pos = 1;
         NodeList xs = new NodeList();
 
@@ -107,7 +107,7 @@ public class Json {
             String rest = json.substring(pos);
             
             if (rest.startsWith("[")) {
-                ParseRetval pr = _parse(rest);
+                ParseResult pr = _parse(rest);
                 xs.add(pr.nl);
                 pos += pr.size;
             } else if (rest.startsWith("]")) {
@@ -134,7 +134,7 @@ public class Json {
             }
         }
 
-        return new ParseRetval(xs, pos);
+        return new ParseResult(xs, pos);
     }
 
 }
