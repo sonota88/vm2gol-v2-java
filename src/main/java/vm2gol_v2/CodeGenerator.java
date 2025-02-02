@@ -179,7 +179,7 @@ public class CodeGenerator {
     }
 
     private void genCall(Names fnArgNames, Names lvarNames, NodeList stmt) {
-        NodeList funcall = stmt.rest();
+        NodeList funcall = stmt.get(1).getItems();
         genFuncall(fnArgNames, lvarNames, funcall);
     }
 

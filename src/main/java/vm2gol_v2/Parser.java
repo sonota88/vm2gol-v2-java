@@ -320,7 +320,7 @@ public class Parser {
 
         return nodelist()
                 .add("call")
-                .addAll(funcall)
+                .add(funcall)
                 ;
     }
 
