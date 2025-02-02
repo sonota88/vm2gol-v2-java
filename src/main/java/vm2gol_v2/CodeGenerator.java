@@ -216,6 +216,8 @@ public class CodeGenerator {
     private void genReturn(Names lvarNames, NodeList stmt) {
         NodeItem retval = stmt.get(1);
         genExpr(new Names(), lvarNames, retval);
+        asmEpilogue();
+        puts("  ret");
     }
 
     private void genWhile(Names fnArgNames, Names lvarNames, NodeList stmt) {
