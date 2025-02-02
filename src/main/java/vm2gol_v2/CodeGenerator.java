@@ -66,7 +66,7 @@ public class CodeGenerator {
         puts("  pop reg_b");
         puts("  pop reg_a");
 
-        puts("  add_ab");
+        puts("  add");
     }
 
     private void genExpr_mult() {
