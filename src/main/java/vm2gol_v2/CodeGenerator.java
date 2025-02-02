@@ -310,12 +310,12 @@ public class CodeGenerator {
         }
     }
 
-    private void genVar(Names fnArgNames, Names lvarNames, NodeList stmtRest) {
+    private void genVar(Names fnArgNames, Names lvarNames, NodeList stmt) {
         puts("  sub_sp 1");
 
-        if (stmtRest.size() == 2) {
-            NodeItem dest = stmtRest.get(0);
-            NodeItem expr = stmtRest.get(1);
+        if (stmt.size() == 3) {
+            NodeItem dest = stmt.get(1);
+            NodeItem expr = stmt.get(2);
             _genSet(fnArgNames, lvarNames, dest, expr);
         }
     }
@@ -339,7 +339,7 @@ public class CodeGenerator {
             if (_stmt.first().strEq("var")) {
                 NodeList stmtRest = _stmt.rest(); 
                 lvarNames.add(stmtRest.first().getStrVal());
-                genVar(fnArgNames, lvarNames, stmtRest);
+                genVar(fnArgNames, lvarNames, _stmt);
             } else {
                 genStmt(fnArgNames, lvarNames, _stmt);
             }
