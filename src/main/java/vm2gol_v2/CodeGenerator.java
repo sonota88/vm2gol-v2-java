@@ -296,14 +296,14 @@ public class CodeGenerator {
         NodeList stmtRest = stmt.rest();
 
         switch (stmtHead) {
-        case "set"     : genSet(    fnArgNames, lvarNames, stmt    ); break;
-        case "call"    : genCall(   fnArgNames, lvarNames, stmt    ); break;
-        case "call_set": genCallSet(fnArgNames, lvarNames, stmt    ); break;
-        case "return"  : genReturn(             lvarNames, stmt    ); break;
-        case "while"   : genWhile(  fnArgNames, lvarNames, stmt    ); break;
-        case "case"    : genCase(   fnArgNames, lvarNames, stmt    ); break;
-        case "_cmt"    : genVmComment(stmt.get(1).getStrVal())      ; break;
-        case "_debug"  : genVmDebug()                               ; break;
+        case "set"     : genSet(    fnArgNames, lvarNames, stmt); break;
+        case "call"    : genCall(   fnArgNames, lvarNames, stmt); break;
+        case "call_set": genCallSet(fnArgNames, lvarNames, stmt); break;
+        case "return"  : genReturn(             lvarNames, stmt); break;
+        case "while"   : genWhile(  fnArgNames, lvarNames, stmt); break;
+        case "case"    : genCase(   fnArgNames, lvarNames, stmt); break;
+        case "_cmt"    : genVmComment(stmt.get(1).getStrVal())  ; break;
+        case "_debug"  : genVmDebug()                           ; break;
         default:
             throw unsupported(stmtHead);
         }
