@@ -246,7 +246,8 @@ public class CodeGenerator {
         puts("");
     }
 
-    private void genCase(Names fnArgNames, Names lvarNames, NodeList whenClauses) {
+    private void genCase(Names fnArgNames, Names lvarNames, NodeList stmt) {
+        NodeList whenClauses = stmt.rest();
         int labelId = CodeGenerator.nextLabelId();
 
         int whenIdx = -1;
@@ -300,7 +301,7 @@ public class CodeGenerator {
         case "call_set": genCallSet(fnArgNames, lvarNames, stmt    ); break;
         case "return"  : genReturn(             lvarNames, stmt    ); break;
         case "while"   : genWhile(  fnArgNames, lvarNames, stmtRest); break;
-        case "case"    : genCase(   fnArgNames, lvarNames, stmtRest); break;
+        case "case"    : genCase(   fnArgNames, lvarNames, stmt    ); break;
         case "_cmt"    : genVmComment(stmtRest.get(0).getStrVal())  ; break;
         case "_debug"  : genVmDebug()                               ; break;
         default:
