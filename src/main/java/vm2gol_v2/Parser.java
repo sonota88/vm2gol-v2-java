@@ -265,19 +265,11 @@ public class Parser {
         while (isBinOp(peek(0))) {
             Token t = peekAndIncrement();
             String op = t.getStr();
-
-            String _op = op;
-            if (StringUtils.equals(_op, "==")) {
-                _op = "==";
-            } else if (StringUtils.equals(_op, "!=")) {
-                _op = "!=";
-            }
-
             NodeItem rhs = parseExprFactor();
 
             expr = NodeItem.of(
                 nodelist()
-                    .add(_op)
+                    .add(op)
                     .add(expr)
                     .add(rhs)
             );
